@@ -175,11 +175,11 @@
           <i class="fa-solid fa-user-plus me-1.5"></i> Cadastrar & Gerenciar Residentes
         </button>
         <button id="tabBtnPerfil" onclick="switchCoordTab('perfil')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800">
-          <i class="fa-solid fa-user-gear me-1.5"></i> Meu Perfil (E-mail)
+          <i class="fa-solid fa-user-gear me-1.5"></i> Meu Perfil (E-mail e Senha)
         </button>
       </div>
 
-      <!-- ABA 1: RELATÓRIO GERAL (CONSOLIDADO EM UMA LINHA) -->
+      <!-- ABA 1: RELATÓRIO GERAL -->
       <div id="tabContentRelatorio" class="space-y-6">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -195,7 +195,7 @@
             </div>
           </div>
 
-          <!-- TABELA DE RELATÓRIO UNIFICADO -->
+          <!-- TABELA UNIFICADA SEM COLUNA DE AÇÃO -->
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
@@ -220,7 +220,7 @@
       <!-- ABA 2: CADASTRO E GERENCIAMENTO DE RESIDENTES -->
       <div id="tabContentResidentes" class="hidden space-y-6">
         
-        <!-- CARD FORMULÁRIO DE CADASTRO -->
+        <!-- FORMULÁRIO DE CADASTRO -->
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <h3 class="text-lg font-bold text-slate-900 mb-2">Cadastrar Novo Residente</h3>
           <p class="text-sm text-slate-500 mb-4">Adicione um novo médico veterinário à lista oficial da residência.</p>
@@ -264,7 +264,7 @@
           </form>
         </div>
 
-        <!-- LISTA E EXCLUSÃO DE RESIDENTES -->
+        <!-- LISTA DE RESIDENTES -->
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <h3 class="text-lg font-bold text-slate-900 mb-4">Residentes Cadastrados</h3>
           <div class="overflow-x-auto">
@@ -286,20 +286,26 @@
 
       </div>
 
-      <!-- ABA 3: PERFIL DO COORDENADOR (EDIÇÃO DE E-MAIL) -->
+      <!-- ABA 3: PERFIL DO COORDENADOR (EDIÇÃO DE E-MAIL E SENHA) -->
       <div id="tabContentPerfil" class="hidden space-y-6 max-w-xl">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-          <h3 class="text-lg font-bold text-slate-900 mb-2">Configurações de Acesso do Coordenador</h3>
-          <p class="text-sm text-slate-500 mb-4">Altere o e-mail utilizado para autenticação do coordenador no sistema.</p>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Editar Meu Perfil (Coordenador)</h3>
+          <p class="text-sm text-slate-500 mb-6">Altere seu e-mail ou sua senha de acesso ao sistema.</p>
 
-          <form id="coordProfileForm" onsubmit="handleUpdateCoordEmail(event)" class="space-y-4">
+          <form id="coordProfileForm" onsubmit="handleUpdateCoordProfile(event)" class="space-y-4">
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Novo E-mail do Coordenador</label>
+              <label class="block text-xs font-medium text-slate-700 mb-1">E-mail do Coordenador</label>
               <input type="email" id="coordEmailInput" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
 
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition shadow-sm">
-              <i class="fa-solid fa-floppy-disk me-1"></i> Salvar Novo E-mail
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Nova Senha</label>
+              <input type="password" id="coordPasswordInput" placeholder="Digite uma nova senha" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <span class="text-[11px] text-slate-400 mt-0.5 block">Deixe em branco caso não queira alterar a senha atual.</span>
+            </div>
+
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition shadow-sm w-full sm:w-auto">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Salvar Alterações
             </button>
           </form>
         </div>
@@ -416,6 +422,7 @@
         document.getElementById('coordinatorDashboard').classList.remove('hidden');
         document.getElementById('residentDashboard').classList.add('hidden');
         document.getElementById('coordEmailInput').value = currentUser.email;
+        document.getElementById('coordPasswordInput').value = '';
         populateResidentFilter();
         renderGeneralReport();
         renderResidentManagementList();
@@ -494,7 +501,7 @@
         residents.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
     }
 
-    // RELATÓRIO GERAL CONSOLIDADO EM UMA ÚNICA LINHA
+    // RELATÓRIO GERAL CONSOLIDADO
     function renderGeneralReport() {
       const tbody = document.getElementById('generalReportBody');
       const filterId = document.getElementById('filterResidentRelatorio').value;
@@ -504,7 +511,6 @@
         filteredPunches = punches.filter(p => p.userId === filterId);
       }
 
-      // Agrupa marcações por Residente + Data
       const grouped = {};
       filteredPunches.forEach(p => {
         const key = `${p.userId}_${p.date}`;
@@ -545,19 +551,32 @@
       `).join('');
     }
 
-    // EDIÇÃO DE E-MAIL DO COORDENADOR
-    function handleUpdateCoordEmail(e) {
+    // EDIÇÃO DE E-MAIL E SENHA DO COORDENADOR
+    function handleUpdateCoordProfile(e) {
       e.preventDefault();
       const newEmail = document.getElementById('coordEmailInput').value.trim();
+      const newPassword = document.getElementById('coordPasswordInput').value.trim();
 
       if (!newEmail) return;
 
-      users = users.map(u => u.id === currentUser.id ? { ...u, email: newEmail } : u);
+      users = users.map(u => {
+        if (u.id === currentUser.id) {
+          const updatedUser = { ...u, email: newEmail };
+          if (newPassword) {
+            updatedUser.pass = newPassword;
+          }
+          return updatedUser;
+        }
+        return u;
+      });
+
       currentUser.email = newEmail;
+      if (newPassword) currentUser.pass = newPassword;
       
       saveData();
       localStorage.setItem('hovet_session', JSON.stringify(currentUser));
-      alert('E-mail do Coordenador atualizado com sucesso!');
+      document.getElementById('coordPasswordInput').value = '';
+      alert('Perfil do Coordenador (e-mail/senha) atualizado com sucesso!');
     }
 
     // CADASTRO E EXCLUSÃO DE RESIDENTES
