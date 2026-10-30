@@ -90,4 +90,525 @@
     <section id="residentDashboard" class="hidden space-y-6">
       
       <!-- CARD DE REGISTRO RÁPIDO E CRONÔMETRO -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 grid grid-cols-
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+        <div class="md:col-span-2 space-y-4">
+          <div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 mb-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 me-1.5 animate-pulse"></span> Sistema Ativo
+            </span>
+            <h2 class="text-2xl font-bold text-slate-900">Registro de Frequência</h2>
+            <p class="text-sm text-slate-500">Selecione o setor atual e registre a entrada/saída do turno.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Setor / Área de Atuação</label>
+              <select id="residentSector" class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="Anestesiologia Veterinária">Anestesiologia Veterinária</option>
+                <option value="Clínica Cirúrgica de Animais de Companhia">Clínica Cirúrgica de Animais de Companhia</option>
+                <option value="Clínica Médica de Animais de Companhia">Clínica Médica de Animais de Companhia</option>
+                <option value="Clínica Médica e Cirúrgica de Grandes Animais">Clínica Médica e Cirúrgica de Grandes Animais</option>
+                <option value="Diagnóstico por Imagem em Medicina Veterinária">Diagnóstico por Imagem em Medicina Veterinária</option>
+                <option value="Medicina Veterinária Preventiva">Medicina Veterinária Preventiva</option>
+                <option value="Patologia Animal">Patologia Animal</option>
+                <option value="Patologia Clínica Veterinária">Patologia Clínica Veterinária</option>
+                <option value="Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos">Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Tipo de Evento</label>
+              <select id="punchType" class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="Entrada">Entrada (Início de Turno)</option>
+                <option value="Saída para Almoço">Saída para Almoço</option>
+                <option value="Retorno do Almoço">Retorno do Almoço</option>
+                <option value="Saída">Saída (Fim de Turno)</option>
+              </select>
+            </div>
+          </div>
+
+          <button onclick="registerPunch()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition shadow-sm flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-fingerprint"></i>
+            <span>Confirmar Registro de Ponto</span>
+          </button>
+        </div>
+
+        <!-- RELÓGIO E STATUS -->
+        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center flex flex-col justify-center items-center">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Horário Oficial de Brasília</span>
+          <div id="liveClock" class="text-3xl font-extrabold text-slate-800 tracking-tight">00:00:00</div>
+          <div id="liveDate" class="text-xs text-slate-500 mt-1 capitalize"></div>
+          
+          <div class="mt-4 pt-4 border-t border-slate-200 w-full">
+            <span class="text-xs text-slate-500 block">Total Horas Registradas</span>
+            <span id="residentTotalHours" class="text-xl font-bold text-blue-600">00h 00m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEU HISTÓRICO -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900 mb-4">Meu Histórico de Registros</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 text-xs uppercase font-semibold">
+                <th class="py-3 px-4">Data</th>
+                <th class="py-3 px-4">Hora</th>
+                <th class="py-3 px-4">Tipo</th>
+                <th class="py-3 px-4">Setor</th>
+                <th class="py-3 px-4">Status Validação</th>
+              </tr>
+            </thead>
+            <tbody id="residentHistoryBody" class="divide-y divide-slate-100 text-sm">
+              <!-- Preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PAINEL DO COORDENADOR -->
+    <section id="coordinatorDashboard" class="hidden space-y-6">
+      
+      <!-- ABAS DE NAVEGAÇÃO -->
+      <div class="flex space-x-2 border-b border-slate-200">
+        <button id="tabBtnPonto" onclick="switchCoordTab('ponto')" class="py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600">
+          <i class="fa-solid fa-list-check me-1.5"></i> Espelhos de Ponto
+        </button>
+        <button id="tabBtnResidentes" onclick="switchCoordTab('residentes')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800">
+          <i class="fa-solid fa-user-plus me-1.5"></i> Cadastrar & Gerenciar Residentes
+        </button>
+      </div>
+
+      <!-- ABA 1: ESPELHO DE PONTO E VALIDAÇÃO -->
+      <div id="tabContentPonto" class="space-y-6">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900">Gerenciamento de Frequências</h2>
+              <p class="text-sm text-slate-500">Acompanhe as marcações e valide a carga horária dos residentes.</p>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+              <select id="filterResident" onchange="renderCoordinatorPunches()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-2">
+                <option value="ALL">Todos os Residentes</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- TABELA DE MARCAÇÕES PARA VALIDAÇÃO -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 text-xs uppercase font-semibold">
+                  <th class="py-3 px-4">Residente</th>
+                  <th class="py-3 px-4">Data / Hora</th>
+                  <th class="py-3 px-4">Evento</th>
+                  <th class="py-3 px-4">Setor</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Ação</th>
+                </tr>
+              </thead>
+              <tbody id="coordinatorPunchesBody" class="divide-y divide-slate-100 text-sm">
+                <!-- Preenchido via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 2: CADASTRO E GERENCIAMENTO DE RESIDENTES -->
+      <div id="tabContentResidentes" class="hidden space-y-6">
+        
+        <!-- CARD FORMULÁRIO DE CADASTRO -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Cadastrar Novo Residente</h3>
+          <p class="text-sm text-slate-500 mb-4">Adicione um novo médico veterinário à lista oficial da residência.</p>
+
+          <form id="addResidentForm" onsubmit="handleAddResident(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Nome Completo</label>
+              <input type="text" id="newResidentName" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Dr. Nome Sobrenome">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">E-mail de Acesso</label>
+              <input type="email" id="newResidentEmail" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="nome@ufmt.br">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Senha Provisória</label>
+              <input type="password" id="newResidentPassword" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="••••••••">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Setor Principal</label>
+              <select id="newResidentSector" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="Anestesiologia Veterinária">Anestesiologia Veterinária</option>
+                <option value="Clínica Cirúrgica de Animais de Companhia">Clínica Cirúrgica de Animais de Companhia</option>
+                <option value="Clínica Médica de Animais de Companhia">Clínica Médica de Animais de Companhia</option>
+                <option value="Clínica Médica e Cirúrgica de Grandes Animais">Clínica Médica e Cirúrgica de Grandes Animais</option>
+                <option value="Diagnóstico por Imagem em Medicina Veterinária">Diagnóstico por Imagem em Medicina Veterinária</option>
+                <option value="Medicina Veterinária Preventiva">Medicina Veterinária Preventiva</option>
+                <option value="Patologia Animal">Patologia Animal</option>
+                <option value="Patologia Clínica Veterinária">Patologia Clínica Veterinária</option>
+                <option value="Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos">Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos</option>
+              </select>
+            </div>
+
+            <div class="sm:col-span-2 md:col-span-4 flex justify-end">
+              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-sm">
+                <i class="fa-solid fa-user-check me-1"></i> Cadastrar Residente
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- LISTA E EXCLUSÃO DE RESIDENTES -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4">Residentes Cadastrados</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 text-xs uppercase font-semibold">
+                  <th class="py-3 px-4">Nome</th>
+                  <th class="py-3 px-4">E-mail</th>
+                  <th class="py-3 px-4">Setor Principal</th>
+                  <th class="py-3 px-4 text-right">Ação</th>
+                </tr>
+              </thead>
+              <tbody id="residentManageBody" class="divide-y divide-slate-100 text-sm">
+                <!-- Preenchido via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- RODAPÉ -->
+  <footer class="bg-white border-t border-slate-200 py-4 mt-auto text-center text-xs text-slate-400">
+    <p>Hospital Veterinário - Universidade Federal de Mato Grosso (HOVET/UFMT)</p>
+    <p class="mt-1">Sistema Integrado de Ponto Eletrônico da Residência</p>
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // LISTA DE ÁREAS OFICIAIS DA UFMT EM ORDEM ALFABÉTICA
+    const OFFICIAL_SECTORS = [
+      "Anestesiologia Veterinária",
+      "Clínica Cirúrgica de Animais de Companhia",
+      "Clínica Médica de Animais de Companhia",
+      "Clínica Médica e Cirúrgica de Grandes Animais",
+      "Diagnóstico por Imagem em Medicina Veterinária",
+      "Medicina Veterinária Preventiva",
+      "Patologia Animal",
+      "Patologia Clínica Veterinária",
+      "Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos"
+    ];
+
+    // BANCO DE DADOS INICIAL / LOCALSTORAGE
+    const DEFAULT_USERS = [
+      { id: '1', name: 'Dr. Lucas Mendes (Residente)', email: 'residente@ufmt.br', pass: '123456', role: 'resident', sector: 'Clínica Médica de Animais de Companhia' },
+      { id: '2', name: 'Dra. Marina Santos (Residente)', email: 'marina@ufmt.br', pass: '123456', role: 'resident', sector: 'Anestesiologia Veterinária' },
+      { id: '99', name: 'Prof. Coordenador HOVET', email: 'coord@ufmt.br', pass: '123456', role: 'coordinator', sector: 'Geral' }
+    ];
+
+    const DEFAULT_PUNCHES = [
+      { id: 101, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '07:30', type: 'Entrada', sector: 'Clínica Médica de Animais de Companhia', status: 'Aprovado' },
+      { id: 102, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '11:45', type: 'Saída para Almoço', sector: 'Clínica Médica de Animais de Companhia', status: 'Aprovado' },
+      { id: 103, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '13:00', type: 'Retorno do Almoço', sector: 'Clínica Médica de Animais de Companhia', status: 'Aprovado' },
+      { id: 104, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '17:30', type: 'Saída', sector: 'Clínica Médica de Animais de Companhia', status: 'Aprovado' }
+    ];
+
+    // ESTADO GLOBAL
+    let currentUser = null;
+    let users = JSON.parse(localStorage.getItem('hovet_users')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches')) || DEFAULT_PUNCHES;
+
+    // INICIALIZAÇÃO
+    window.addEventListener('DOMContentLoaded', () => {
+      startClock();
+      checkSession();
+    });
+
+    // RELÓGIO EM TEMPO REAL
+    function startClock() {
+      const update = () => {
+        const now = new Date();
+        document.getElementById('liveClock').innerText = now.toLocaleTimeString('pt-BR');
+        document.getElementById('liveDate').innerText = now.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      };
+      update();
+      setInterval(update, 1000);
+    }
+
+    // AUTENTICAÇÃO
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value.trim();
+
+      const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.pass === pass);
+
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('hovet_session', JSON.stringify(user));
+        document.getElementById('loginError').classList.add('hidden');
+        renderApp();
+      } else {
+        document.getElementById('loginError').classList.remove('hidden');
+      }
+    }
+
+    function checkSession() {
+      const session = localStorage.getItem('hovet_session');
+      if (session) {
+        currentUser = JSON.parse(session);
+        renderApp();
+      } else {
+        showLogin();
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('hovet_session');
+      showLogin();
+    }
+
+    function showLogin() {
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('residentDashboard').classList.add('hidden');
+      document.getElementById('coordinatorDashboard').classList.add('hidden');
+      document.getElementById('userHeaderInfo').classList.add('hidden');
+    }
+
+    function renderApp() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('userHeaderInfo').classList.remove('hidden');
+      document.getElementById('userName').innerText = currentUser.name;
+      document.getElementById('userRole').innerText = currentUser.role === 'coordinator' ? 'Coordenador' : 'Residente';
+
+      if (currentUser.role === 'resident') {
+        document.getElementById('residentDashboard').classList.remove('hidden');
+        document.getElementById('coordinatorDashboard').classList.add('hidden');
+        document.getElementById('residentSector').value = currentUser.sector || OFFICIAL_SECTORS[0];
+        renderResidentHistory();
+      } else {
+        document.getElementById('coordinatorDashboard').classList.remove('hidden');
+        document.getElementById('residentDashboard').classList.add('hidden');
+        populateResidentFilter();
+        renderCoordinatorPunches();
+        renderResidentManagementList();
+      }
+    }
+
+    // REGISTRO DE PONTO (RESIDENTE)
+    function registerPunch() {
+      const now = new Date();
+      const dateStr = now.toISOString().split('T')[0];
+      const timeStr = now.toTimeString().split(' ')[0].substring(0, 5);
+
+      const sector = document.getElementById('residentSector').value;
+      const type = document.getElementById('punchType').value;
+
+      const newPunch = {
+        id: Date.now(),
+        userId: currentUser.id,
+        userName: currentUser.name,
+        date: dateStr,
+        time: timeStr,
+        type: type,
+        sector: sector,
+        status: 'Pendente'
+      };
+
+      punches.unshift(newPunch);
+      saveData();
+      renderResidentHistory();
+      alert(`Ponto registrado com sucesso!\nHorário: ${timeStr} | Tipo: ${type}`);
+    }
+
+    function renderResidentHistory() {
+      const tbody = document.getElementById('residentHistoryBody');
+      const userPunches = punches.filter(p => p.userId === currentUser.id);
+
+      if (userPunches.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
+        document.getElementById('residentTotalHours').innerText = '00h 00m';
+        return;
+      }
+
+      tbody.innerHTML = userPunches.map(p => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-3 px-4 font-medium">${formatDate(p.date)}</td>
+          <td class="py-3 px-4 font-semibold text-blue-600">${p.time}</td>
+          <td class="py-3 px-4">${p.type}</td>
+          <td class="py-3 px-4 text-slate-600">${p.sector}</td>
+          <td class="py-3 px-4">${renderStatusBadge(p.status)}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('residentTotalHours').innerText = calculateHours(userPunches);
+    }
+
+    // COORDENADOR: ABAS
+    function switchCoordTab(tab) {
+      if (tab === 'ponto') {
+        document.getElementById('tabContentPonto').classList.remove('hidden');
+        document.getElementById('tabContentResidentes').classList.add('hidden');
+        document.getElementById('tabBtnPonto').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600";
+        document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
+      } else {
+        document.getElementById('tabContentPonto').classList.add('hidden');
+        document.getElementById('tabContentResidentes').classList.remove('hidden');
+        document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600";
+        document.getElementById('tabBtnPonto').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
+      }
+    }
+
+    // COORDENADOR: VALIDAÇÃO DE PONTO
+    function populateResidentFilter() {
+      const select = document.getElementById('filterResident');
+      const residents = users.filter(u => u.role === 'resident');
+      select.innerHTML = `<option value="ALL">Todos os Residentes</option>` + 
+        residents.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    }
+
+    function renderCoordinatorPunches() {
+      const tbody = document.getElementById('coordinatorPunchesBody');
+      const filterId = document.getElementById('filterResident').value;
+
+      let filtered = punches;
+      if (filterId !== 'ALL') {
+        filtered = punches.filter(p => p.userId === filterId);
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Nenhum registro para exibir.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(p => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-3 px-4 font-medium text-slate-900">${p.userName}</td>
+          <td class="py-3 px-4">${formatDate(p.date)} - <span class="font-semibold text-slate-700">${p.time}</span></td>
+          <td class="py-3 px-4">${p.type}</td>
+          <td class="py-3 px-4 text-slate-600">${p.sector}</td>
+          <td class="py-3 px-4">${renderStatusBadge(p.status)}</td>
+          <td class="py-3 px-4 text-right space-x-1">
+            ${p.status === 'Pendente' ? `
+              <button onclick="updatePunchStatus(${p.id}, 'Aprovado')" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2 py-1 rounded font-medium transition">Aprovar</button>
+              <button onclick="updatePunchStatus(${p.id}, 'Recusado')" class="text-xs bg-red-100 hover:bg-red-200 text-red-800 px-2 py-1 rounded font-medium transition">Recusar</button>
+            ` : `<span class="text-xs text-slate-400">Concluído</span>`}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updatePunchStatus(punchId, newStatus) {
+      punches = punches.map(p => p.id === punchId ? { ...p, status: newStatus } : p);
+      saveData();
+      renderCoordinatorPunches();
+    }
+
+    // COORDENADOR: GERENCIAMENTO DE RESIDENTES (CADASTRO E EXCLUSÃO)
+    function handleAddResident(e) {
+      e.preventDefault();
+      const name = document.getElementById('newResidentName').value.trim();
+      const email = document.getElementById('newResidentEmail').value.trim();
+      const pass = document.getElementById('newResidentPassword').value.trim();
+      const sector = document.getElementById('newResidentSector').value;
+
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        alert('Este e-mail já está cadastrado no sistema.');
+        return;
+      }
+
+      const newRes = {
+        id: String(Date.now()),
+        name: name,
+        email: email,
+        pass: pass,
+        role: 'resident',
+        sector: sector
+      };
+
+      users.push(newRes);
+      saveData();
+      populateResidentFilter();
+      renderResidentManagementList();
+
+      document.getElementById('addResidentForm').reset();
+      alert(`Residente ${name} cadastrado com sucesso!`);
+    }
+
+    function renderResidentManagementList() {
+      const tbody = document.getElementById('residentManageBody');
+      const residents = users.filter(u => u.role === 'resident');
+
+      if (residents.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-400">Nenhum residente cadastrado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = residents.map(r => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-3 px-4 font-medium text-slate-900">${r.name}</td>
+          <td class="py-3 px-4 text-slate-600">${r.email}</td>
+          <td class="py-3 px-4 text-slate-600">${r.sector}</td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="deleteResident('${r.id}', '${r.name}')" class="text-xs text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded-lg transition" title="Excluir Perfil">
+              <i class="fa-solid fa-trash-can text-sm me-1"></i> Excluir
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function deleteResident(id, name) {
+      if (confirm(`Tem certeza que deseja excluir o residente "${name}"?\nOs registros de ponto associados também serão removidos.`)) {
+        users = users.filter(u => u.id !== id);
+        punches = punches.filter(p => p.userId !== id);
+        saveData();
+        populateResidentFilter();
+        renderCoordinatorPunches();
+        renderResidentManagementList();
+      }
+    }
+
+    // AUXILIARES
+    function saveData() {
+      localStorage.setItem('hovet_users', JSON.stringify(users));
+      localStorage.setItem('hovet_punches', JSON.stringify(punches));
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const [year, month, day] = dateStr.split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    function renderStatusBadge(status) {
+      if (status === 'Aprovado') {
+        return `<span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-medium">Aprovado</span>`;
+      } else if (status === 'Recusado') {
+        return `<span class="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full font-medium">Recusado</span>`;
+      }
+      return `<span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">Pendente</span>`;
+    }
+
+    function calculateHours(userPunches) {
+      const approved = userPunches.filter(p => p.type === 'Saída').length;
+      return `${approved * 8}h 00m`;
+    }
+  </script>
+</body>
+</html>
