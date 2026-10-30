@@ -24,7 +24,7 @@
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <div class="bg-blue-600 text-white p-2 rounded-lg font-bold">
-          <i class="fa-solid me-1 fa-hospital flex-shrink-0"></i>
+          <i class="fa-solid fa-hospital flex-shrink-0"></i>
         </div>
         <div>
           <h1 class="font-bold text-slate-900 text-base leading-tight">HOVET / UFMT</h1>
@@ -138,11 +138,6 @@
           <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Horário Oficial de Brasília</span>
           <div id="liveClock" class="text-3xl font-extrabold text-slate-800 tracking-tight">00:00:00</div>
           <div id="liveDate" class="text-xs text-slate-500 mt-1 capitalize"></div>
-          
-          <div class="mt-4 pt-4 border-t border-slate-200 w-full">
-            <span class="text-xs text-slate-500 block">Total Horas Registradas</span>
-            <span id="residentTotalHours" class="text-xl font-bold text-blue-600">00h 00m</span>
-          </div>
         </div>
       </div>
 
@@ -157,7 +152,6 @@
                 <th class="py-3 px-4">Hora</th>
                 <th class="py-3 px-4">Tipo</th>
                 <th class="py-3 px-4">Setor</th>
-                <th class="py-3 px-4">Status Validação</th>
               </tr>
             </thead>
             <tbody id="residentHistoryBody" class="divide-y divide-slate-100 text-sm">
@@ -172,46 +166,50 @@
     <!-- PAINEL DO COORDENADOR -->
     <section id="coordinatorDashboard" class="hidden space-y-6">
       
-      <!-- ABAS DE NAVEGAÇÃO -->
-      <div class="flex space-x-2 border-b border-slate-200">
-        <button id="tabBtnPonto" onclick="switchCoordTab('ponto')" class="py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600">
-          <i class="fa-solid fa-list-check me-1.5"></i> Espelhos de Ponto
+      <!-- ABAS DE NAVEGAÇÃO DO COORDENADOR -->
+      <div class="flex flex-wrap gap-2 border-b border-slate-200">
+        <button id="tabBtnRelatorio" onclick="switchCoordTab('relatorio')" class="py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600">
+          <i class="fa-solid fa-table-list me-1.5"></i> Relatório Geral de Pontos
         </button>
         <button id="tabBtnResidentes" onclick="switchCoordTab('residentes')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800">
           <i class="fa-solid fa-user-plus me-1.5"></i> Cadastrar & Gerenciar Residentes
         </button>
+        <button id="tabBtnPerfil" onclick="switchCoordTab('perfil')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800">
+          <i class="fa-solid fa-user-gear me-1.5"></i> Meu Perfil (E-mail)
+        </button>
       </div>
 
-      <!-- ABA 1: ESPELHO DE PONTO E VALIDAÇÃO -->
-      <div id="tabContentPonto" class="space-y-6">
+      <!-- ABA 1: RELATÓRIO GERAL (CONSOLIDADO EM UMA LINHA) -->
+      <div id="tabContentRelatorio" class="space-y-6">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div>
-              <h2 class="text-xl font-bold text-slate-900">Gerenciamento de Frequências</h2>
-              <p class="text-sm text-slate-500">Acompanhe as marcações e valide a carga horária dos residentes.</p>
+              <h2 class="text-xl font-bold text-slate-900">Relatório Geral Consolidado</h2>
+              <p class="text-sm text-slate-500">Visualização unificada de entradas e saídas por residente e dia.</p>
             </div>
             
             <div class="flex items-center space-x-3">
-              <select id="filterResident" onchange="renderCoordinatorPunches()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-2">
+              <select id="filterResidentRelatorio" onchange="renderGeneralReport()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-2">
                 <option value="ALL">Todos os Residentes</option>
               </select>
             </div>
           </div>
 
-          <!-- TABELA DE MARCAÇÕES PARA VALIDAÇÃO -->
+          <!-- TABELA DE RELATÓRIO UNIFICADO -->
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="border-b border-slate-200 text-slate-500 text-xs uppercase font-semibold">
                   <th class="py-3 px-4">Residente</th>
-                  <th class="py-3 px-4">Data / Hora</th>
-                  <th class="py-3 px-4">Evento</th>
+                  <th class="py-3 px-4">Data</th>
                   <th class="py-3 px-4">Setor</th>
-                  <th class="py-3 px-4">Status</th>
-                  <th class="py-3 px-4 text-right">Ação</th>
+                  <th class="py-3 px-4 text-center bg-slate-50/50">Entrada</th>
+                  <th class="py-3 px-4 text-center bg-slate-50/50">Saída Almoço</th>
+                  <th class="py-3 px-4 text-center bg-slate-50/50">Volta Almoço</th>
+                  <th class="py-3 px-4 text-center bg-slate-50/50">Saída</th>
                 </tr>
               </thead>
-              <tbody id="coordinatorPunchesBody" class="divide-y divide-slate-100 text-sm">
+              <tbody id="generalReportBody" class="divide-y divide-slate-100 text-sm">
                 <!-- Preenchido via JS -->
               </tbody>
             </table>
@@ -288,6 +286,25 @@
 
       </div>
 
+      <!-- ABA 3: PERFIL DO COORDENADOR (EDIÇÃO DE E-MAIL) -->
+      <div id="tabContentPerfil" class="hidden space-y-6 max-w-xl">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Configurações de Acesso do Coordenador</h3>
+          <p class="text-sm text-slate-500 mb-4">Altere o e-mail utilizado para autenticação do coordenador no sistema.</p>
+
+          <form id="coordProfileForm" onsubmit="handleUpdateCoordEmail(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Novo E-mail do Coordenador</label>
+              <input type="email" id="coordEmailInput" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition shadow-sm">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Salvar Novo E-mail
+            </button>
+          </form>
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -300,7 +317,6 @@
 
   <!-- SCRIPT LOGIC -->
   <script>
-    // LISTA DE ÁREAS OFICIAIS DA UFMT EM ORDEM ALFABÉTICA
     const OFFICIAL_SECTORS = [
       "Anestesiologia Veterinária",
       "Clínica Cirúrgica de Animais de Companhia",
@@ -313,7 +329,6 @@
       "Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos"
     ];
 
-    // BANCO DE DADOS INICIAL / LOCALSTORAGE
     const DEFAULT_USERS = [
       { id: '1', name: 'Dr. Lucas Mendes (Residente)', email: 'residente@ufmt.br', pass: '123456', role: 'resident', sector: 'Clínica Médica de Animais de Companhia' },
       { id: '2', name: 'Dra. Marina Santos (Residente)', email: 'marina@ufmt.br', pass: '123456', role: 'resident', sector: 'Anestesiologia Veterinária' },
@@ -321,24 +336,21 @@
     ];
 
     const DEFAULT_PUNCHES = [
-      { id: 101, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '07:30', type: 'Entrada', sector: 'Clínica Médica de Animais de Companhia', status: 'Aprovado' },
-      { id: 102, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '11:45', type: 'Saída para Almoço', sector: 'Clínica Médica de Animais de Companhia', status: 'Aprovado' },
-      { id: 103, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '13:00', type: 'Retorno do Almoço', sector: 'Clínica Médica de Animais de Companhia', status: 'Aprovado' },
-      { id: 104, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '17:30', type: 'Saída', sector: 'Clínica Médica de Animais de Companhia', status: 'Aprovado' }
+      { id: 101, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '07:30', type: 'Entrada', sector: 'Clínica Médica de Animais de Companhia' },
+      { id: 102, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '11:45', type: 'Saída para Almoço', sector: 'Clínica Médica de Animais de Companhia' },
+      { id: 103, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '13:00', type: 'Retorno do Almoço', sector: 'Clínica Médica de Animais de Companhia' },
+      { id: 104, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '17:30', type: 'Saída', sector: 'Clínica Médica de Animais de Companhia' }
     ];
 
-    // ESTADO GLOBAL
     let currentUser = null;
     let users = JSON.parse(localStorage.getItem('hovet_users')) || DEFAULT_USERS;
     let punches = JSON.parse(localStorage.getItem('hovet_punches')) || DEFAULT_PUNCHES;
 
-    // INICIALIZAÇÃO
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
       checkSession();
     });
 
-    // RELÓGIO EM TEMPO REAL
     function startClock() {
       const update = () => {
         const now = new Date();
@@ -349,7 +361,6 @@
       setInterval(update, 1000);
     }
 
-    // AUTENTICAÇÃO
     function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('loginEmail').value.trim();
@@ -404,13 +415,13 @@
       } else {
         document.getElementById('coordinatorDashboard').classList.remove('hidden');
         document.getElementById('residentDashboard').classList.add('hidden');
+        document.getElementById('coordEmailInput').value = currentUser.email;
         populateResidentFilter();
-        renderCoordinatorPunches();
+        renderGeneralReport();
         renderResidentManagementList();
       }
     }
 
-    // REGISTRO DE PONTO (RESIDENTE)
     function registerPunch() {
       const now = new Date();
       const dateStr = now.toISOString().split('T')[0];
@@ -426,8 +437,7 @@
         date: dateStr,
         time: timeStr,
         type: type,
-        sector: sector,
-        status: 'Pendente'
+        sector: sector
       };
 
       punches.unshift(newPunch);
@@ -441,8 +451,7 @@
       const userPunches = punches.filter(p => p.userId === currentUser.id);
 
       if (userPunches.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
-        document.getElementById('residentTotalHours').innerText = '00h 00m';
+        tbody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
         return;
       }
 
@@ -452,74 +461,106 @@
           <td class="py-3 px-4 font-semibold text-blue-600">${p.time}</td>
           <td class="py-3 px-4">${p.type}</td>
           <td class="py-3 px-4 text-slate-600">${p.sector}</td>
-          <td class="py-3 px-4">${renderStatusBadge(p.status)}</td>
         </tr>
       `).join('');
-
-      document.getElementById('residentTotalHours').innerText = calculateHours(userPunches);
     }
 
-    // COORDENADOR: ABAS
+    // COORDENADOR: TROCA DE ABAS
     function switchCoordTab(tab) {
-      if (tab === 'ponto') {
-        document.getElementById('tabContentPonto').classList.remove('hidden');
-        document.getElementById('tabContentResidentes').classList.add('hidden');
-        document.getElementById('tabBtnPonto').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600";
-        document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
-      } else {
-        document.getElementById('tabContentPonto').classList.add('hidden');
+      document.getElementById('tabContentRelatorio').classList.add('hidden');
+      document.getElementById('tabContentResidentes').classList.add('hidden');
+      document.getElementById('tabContentPerfil').classList.add('hidden');
+
+      document.getElementById('tabBtnRelatorio').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
+      document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
+      document.getElementById('tabBtnPerfil').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
+
+      if (tab === 'relatorio') {
+        document.getElementById('tabContentRelatorio').classList.remove('hidden');
+        document.getElementById('tabBtnRelatorio').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600";
+      } else if (tab === 'residentes') {
         document.getElementById('tabContentResidentes').classList.remove('hidden');
         document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600";
-        document.getElementById('tabBtnPonto').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
+      } else if (tab === 'perfil') {
+        document.getElementById('tabContentPerfil').classList.remove('hidden');
+        document.getElementById('tabBtnPerfil').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600";
       }
     }
 
-    // COORDENADOR: VALIDAÇÃO DE PONTO
     function populateResidentFilter() {
-      const select = document.getElementById('filterResident');
+      const select = document.getElementById('filterResidentRelatorio');
       const residents = users.filter(u => u.role === 'resident');
       select.innerHTML = `<option value="ALL">Todos os Residentes</option>` + 
         residents.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
     }
 
-    function renderCoordinatorPunches() {
-      const tbody = document.getElementById('coordinatorPunchesBody');
-      const filterId = document.getElementById('filterResident').value;
+    // RELATÓRIO GERAL CONSOLIDADO EM UMA ÚNICA LINHA
+    function renderGeneralReport() {
+      const tbody = document.getElementById('generalReportBody');
+      const filterId = document.getElementById('filterResidentRelatorio').value;
 
-      let filtered = punches;
+      let filteredPunches = punches;
       if (filterId !== 'ALL') {
-        filtered = punches.filter(p => p.userId === filterId);
+        filteredPunches = punches.filter(p => p.userId === filterId);
       }
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Nenhum registro para exibir.</td></tr>`;
+      // Agrupa marcações por Residente + Data
+      const grouped = {};
+      filteredPunches.forEach(p => {
+        const key = `${p.userId}_${p.date}`;
+        if (!grouped[key]) {
+          grouped[key] = {
+            userName: p.userName,
+            date: p.date,
+            sector: p.sector,
+            entrada: '--:--',
+            saidaAlmoco: '--:--',
+            voltaAlmoco: '--:--',
+            saida: '--:--'
+          };
+        }
+        if (p.type === 'Entrada') grouped[key].entrada = p.time;
+        if (p.type === 'Saída para Almoço') grouped[key].saidaAlmoco = p.time;
+        if (p.type === 'Retorno do Almoço') grouped[key].voltaAlmoco = p.time;
+        if (p.type === 'Saída') grouped[key].saida = p.time;
+      });
+
+      const reportArray = Object.values(grouped);
+
+      if (reportArray.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">Nenhum registro para exibir.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = filtered.map(p => `
+      tbody.innerHTML = reportArray.map(r => `
         <tr class="hover:bg-slate-50 transition">
-          <td class="py-3 px-4 font-medium text-slate-900">${p.userName}</td>
-          <td class="py-3 px-4">${formatDate(p.date)} - <span class="font-semibold text-slate-700">${p.time}</span></td>
-          <td class="py-3 px-4">${p.type}</td>
-          <td class="py-3 px-4 text-slate-600">${p.sector}</td>
-          <td class="py-3 px-4">${renderStatusBadge(p.status)}</td>
-          <td class="py-3 px-4 text-right space-x-1">
-            ${p.status === 'Pendente' ? `
-              <button onclick="updatePunchStatus(${p.id}, 'Aprovado')" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2 py-1 rounded font-medium transition">Aprovar</button>
-              <button onclick="updatePunchStatus(${p.id}, 'Recusado')" class="text-xs bg-red-100 hover:bg-red-200 text-red-800 px-2 py-1 rounded font-medium transition">Recusar</button>
-            ` : `<span class="text-xs text-slate-400">Concluído</span>`}
-          </td>
+          <td class="py-3 px-4 font-medium text-slate-900">${r.userName}</td>
+          <td class="py-3 px-4 text-slate-600">${formatDate(r.date)}</td>
+          <td class="py-3 px-4 text-slate-600">${r.sector}</td>
+          <td class="py-3 px-4 text-center font-semibold text-emerald-600 bg-slate-50/50">${r.entrada}</td>
+          <td class="py-3 px-4 text-center text-amber-600 bg-slate-50/50">${r.saidaAlmoco}</td>
+          <td class="py-3 px-4 text-center text-blue-600 bg-slate-50/50">${r.voltaAlmoco}</td>
+          <td class="py-3 px-4 text-center font-semibold text-slate-700 bg-slate-50/50">${r.saida}</td>
         </tr>
       `).join('');
     }
 
-    function updatePunchStatus(punchId, newStatus) {
-      punches = punches.map(p => p.id === punchId ? { ...p, status: newStatus } : p);
+    // EDIÇÃO DE E-MAIL DO COORDENADOR
+    function handleUpdateCoordEmail(e) {
+      e.preventDefault();
+      const newEmail = document.getElementById('coordEmailInput').value.trim();
+
+      if (!newEmail) return;
+
+      users = users.map(u => u.id === currentUser.id ? { ...u, email: newEmail } : u);
+      currentUser.email = newEmail;
+      
       saveData();
-      renderCoordinatorPunches();
+      localStorage.setItem('hovet_session', JSON.stringify(currentUser));
+      alert('E-mail do Coordenador atualizado com sucesso!');
     }
 
-    // COORDENADOR: GERENCIAMENTO DE RESIDENTES (CADASTRO E EXCLUSÃO)
+    // CADASTRO E EXCLUSÃO DE RESIDENTES
     function handleAddResident(e) {
       e.preventDefault();
       const name = document.getElementById('newResidentName').value.trim();
@@ -579,12 +620,11 @@
         punches = punches.filter(p => p.userId !== id);
         saveData();
         populateResidentFilter();
-        renderCoordinatorPunches();
+        renderGeneralReport();
         renderResidentManagementList();
       }
     }
 
-    // AUXILIARES
     function saveData() {
       localStorage.setItem('hovet_users', JSON.stringify(users));
       localStorage.setItem('hovet_punches', JSON.stringify(punches));
@@ -594,20 +634,6 @@
       if (!dateStr) return '';
       const [year, month, day] = dateStr.split('-');
       return `${day}/${month}/${year}`;
-    }
-
-    function renderStatusBadge(status) {
-      if (status === 'Aprovado') {
-        return `<span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-medium">Aprovado</span>`;
-      } else if (status === 'Recusado') {
-        return `<span class="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full font-medium">Recusado</span>`;
-      }
-      return `<span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full font-medium">Pendente</span>`;
-    }
-
-    function calculateHours(userPunches) {
-      const approved = userPunches.filter(p => p.type === 'Saída').length;
-      return `${approved * 8}h 00m`;
     }
   </script>
 </body>
