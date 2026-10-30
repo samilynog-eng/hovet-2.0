@@ -1,1 +1,609 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ponto Eletrônico - Residentes HOVET/UFMT</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        ufmt: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        },
+                        vet: {
+                            light: '#f4fbf7',
+                            card: '#ffffff',
+                            accent: '#2dd4bf'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-teal-100">
+
+    <!-- Navbar Base -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-teal-600 flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                        <i data-lucide="cross"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-slate-900 text-lg leading-tight">HOVET - UFMT</h1>
+                        <p class="text-xs text-slate-500 font-medium">Sistema de Ponto Eletrônico de Residentes</p>
+                    </div>
+                </div>
+
+                <!-- Info Usuário Logado -->
+                <div id="userInfoHeader" class="hidden items-center gap-4">
+                    <div class="text-right hidden sm:block">
+                        <span id="userNameHeader" class="block text-sm font-semibold text-slate-800"></span>
+                        <span id="userRoleHeader" class="block text-xs text-teal-600 font-medium"></span>
+                    </div>
+                    <button onclick="logout()" class="p-2 text-slate-400 hover:text-red-500 hover:bg-slate-100 rounded-lg transition" title="Sair">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6">
+
+        <!-- ================= TELA DE LOGIN ================= -->
+        <div id="loginScreen" class="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8 transition-all">
+            <div class="text-center mb-8">
+                <div class="inline-flex p-3 bg-teal-50 text-teal-600 rounded-full mb-3">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900">Acesso ao Sistema</h2>
+                <p class="text-sm text-slate-500 mt-1">Insira suas credenciais corporativas</p>
+            </div>
+
+            <!-- Botões para alternar perfil de login rápido para demonstração -->
+            <div class="flex bg-slate-100 p-1 rounded-xl mb-6">
+                <button type="button" id="tabResidente" onclick="setPerfilLogin('residente')" class="flex-1 py-2 text-xs font-semibold rounded-lg text-slate-700 bg-white shadow-sm transition">
+                    Residente
+                </button>
+                <button type="button" id="tabCoordenador" onclick="setPerfilLogin('coordenador')" class="flex-1 py-2 text-xs font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition">
+                    Coordenador
+                </button>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">E-mail institucional</label>
+                    <div class="relative">
+                        <i data-lucide="mail" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="email" id="loginEmail" required placeholder="exemplo@ufmt.br" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Senha</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-slate-500 py-1">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="rounded border-slate-300 text-teal-600 focus:ring-teal-500">
+                        Lembrar acesso
+                    </label>
+                    <a href="#" class="text-teal-600 hover:underline">Esqueceu a senha?</a>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2">
+                    Entrar no Sistema
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 text-center">
+                <p class="text-xs text-slate-400">Ambiente seguro | HOVET - Universidade Federal de Mato Grosso</p>
+            </div>
+        </div>
+
+        <!-- ================= VISÃO DO RESIDENTE ================= -->
+        <div id="residenteView" class="hidden w-full max-w-6xl space-y-6">
+            
+            <!-- Linha Superior: Relógio + Painel de Ação -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Relógio em Tempo Real -->
+                <div class="bg-gradient-to-br from-teal-600 to-teal-800 text-white p-6 rounded-2xl shadow-lg flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-medium">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Horário Oficial
+                            </span>
+                            <i data-lucide="clock" class="w-6 h-6 text-teal-200"></i>
+                        </div>
+                        <div id="clockDisplay" class="text-4xl sm:text-5xl font-extrabold tracking-tight mt-6 mb-2 font-mono">
+                            00:00:00
+                        </div>
+                        <p id="dateDisplay" class="text-teal-100 text-sm capitalize"></p>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-white/20 flex justify-between items-center text-xs text-teal-100">
+                        <span>Carga diária: 8 horas</span>
+                        <span id="statusHojeBadge" class="bg-white/20 px-2 py-1 rounded font-semibold">Sem registros</span>
+                    </div>
+                </div>
+
+                <!-- Painel de Bater Ponto -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800 mb-1 flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-teal-600"></i> Registrar Frequência
+                        </h2>
+                        <p class="text-xs text-slate-500 mb-4">Selecione o setor de atuação do momento e registre seu ponto.</p>
+                        
+                        <div class="mb-4">
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Setor do HOVET</label>
+                            <select id="selectSetor" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <option value="Clínica Médica de Pequenos Animais">Clínica Médica de Pequenos Animais</option>
+                                <option value="Cirurgia de Pequenos Animais">Cirurgia de Pequenos Animais</option>
+                                <option value="Anestesiologia Veterinária">Anestesiologia Veterinária</option>
+                                <option value="Diagnóstico por Imagem">Diagnóstico por Imagem</option>
+                                <option value="Patologia Clínica & Anatomopatologia">Patologia Clínica & Anatomopatologia</option>
+                                <option value="Clínica e Cirurgia de Grandes Animais">Clínica e Cirurgia de Grandes Animais</option>
+                                <option value="Setor de Urgência e Emergência">Setor de Urgência e Emergência</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Registro -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                        <button onclick="registrarPonto('Entrada')" class="flex flex-col items-center justify-center p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-xl transition group">
+                            <i data-lucide="log-in" class="w-6 h-6 text-emerald-600 mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-bold">Entrada</span>
+                        </button>
+                        <button onclick="registrarPonto('Saída Almoço')" class="flex flex-col items-center justify-center p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 rounded-xl transition group">
+                            <i data-lucide="coffee" class="w-6 h-6 text-amber-600 mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-bold">Saída Almoço</span>
+                        </button>
+                        <button onclick="registrarPonto('Retorno Almoço')" class="flex flex-col items-center justify-center p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-800 rounded-xl transition group">
+                            <i data-lucide="rotate-ccw" class="w-6 h-6 text-blue-600 mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-bold">Retorno Almoço</span>
+                        </button>
+                        <button onclick="registrarPonto('Saída')" class="flex flex-col items-center justify-center p-3 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-800 rounded-xl transition group">
+                            <i data-lucide="log-out" class="w-6 h-6 text-rose-600 mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-bold">Saída</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo e Histórico -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg">Histórico de Frequência</h3>
+                        <p class="text-xs text-slate-500">Registros e apuração total de horas trabalhadas</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="bg-slate-100 px-4 py-2 rounded-xl text-right">
+                            <span class="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">Total do Mês</span>
+                            <span id="totalHorasMes" class="text-lg font-extrabold text-teal-700">00h 00m</span>
+                        </div>
+                        <button onclick="exportarRelatorioPessoal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-sm">
+                            <i data-lucide="download" class="w-4 h-4"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold text-xs uppercase tracking-wider">
+                            <tr>
+                                <th class="p-4">Data</th>
+                                <th class="p-4">Setor</th>
+                                <th class="p-4">Tipo</th>
+                                <th class="p-4">Horário</th>
+                                <th class="p-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaHistoricoResidente" class="divide-y divide-slate-100">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VISÃO DO COORDENADOR ================= -->
+        <div id="coordenadorView" class="hidden w-full max-w-7xl space-y-6">
+            
+            <!-- Cards Informativos do Coordenador -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-teal-100 text-teal-700 rounded-xl">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Residentes Ativos</span>
+                        <h4 id="statTotalResidentes" class="text-2xl font-extrabold text-slate-800">0</h4>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-emerald-100 text-emerald-700 rounded-xl">
+                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Em Serviço Agora</span>
+                        <h4 id="statEmServico" class="text-2xl font-extrabold text-emerald-600">0</h4>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-amber-100 text-amber-700 rounded-xl">
+                        <i data-lucide="coffee" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Em Intervalo</span>
+                        <h4 id="statEmIntervalo" class="text-2xl font-extrabold text-amber-600">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela Principal do Coordenador -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg">Painel Geral & Validação de Espelho de Ponto</h3>
+                        <p class="text-xs text-slate-500">Acompanhamento dos registros e homologação das horas da residência</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="filterBusca" oninput="renderCoordenadorView()" placeholder="Buscar residente ou setor..." class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold text-xs uppercase tracking-wider">
+                            <tr>
+                                <th class="p-4">Residente</th>
+                                <th class="p-4">Setor Atual</th>
+                                <th class="p-4">Último Registro</th>
+                                <th class="p-4">Total Horas (Mês)</th>
+                                <th class="p-4">Status Espelho</th>
+                                <th class="p-4 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaCoordenador" class="divide-y divide-slate-100">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
+        <p>© HOVET/UFMT - Hospital Veterinário da Universidade Federal de Mato Grosso</p>
+    </footer>
+
+    <!-- Notificações Toast Simples -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 text-sm z-50">
+        <i data-lucide="info" class="w-4 h-4 text-teal-400"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // --- DADOS INICIAIS E PERSISTÊNCIA ---
+        let currentPerfilLogin = 'residente';
+        let usuarioLogado = null;
+
+        // Base inicial de residentes para demonstração
+        const INITIAL_RESIDENTES = [
+            { id: 1, nome: 'Dra. Ana Silva', email: 'ana.silva@ufmt.br', perfil: 'residente', homologado: false },
+            { id: 2, nome: 'Dr. Lucas Prado', email: 'lucas.prado@ufmt.br', perfil: 'residente', homologado: true },
+            { id: 3, nome: 'Dra. Beatriz Santos', email: 'beatriz.santos@ufmt.br', perfil: 'residente', homologado: false }
+        ];
+
+        const COORDENADOR_USER = {
+            id: 99,
+            nome: 'Prof. Dr. Roberto Coordenador',
+            email: 'coordenacao.hovet@ufmt.br',
+            perfil: 'coordenador'
+        };
+
+        // Carregar dados salvos ou inicializar
+        function getPontos() {
+            return JSON.parse(localStorage.getItem('hovet_pontos')) || [
+                { id: 101, residenteId: 1, setor: 'Clínica Médica de Pequenos Animais', tipo: 'Entrada', timestamp: new Date(Date.now() - 14400000).toISOString() },
+                { id: 102, residenteId: 1, setor: 'Clínica Médica de Pequenos Animais', tipo: 'Saída Almoço', timestamp: new Date(Date.now() - 7200000).toISOString() },
+                { id: 103, residenteId: 2, setor: 'Cirurgia de Pequenos Animais', tipo: 'Entrada', timestamp: new Date(Date.now() - 18000000).toISOString() }
+            ];
+        }
+
+        function savePontos(pontos) {
+            localStorage.setItem('hovet_pontos', JSON.stringify(pontos));
+        }
+
+        function getResidentes() {
+            return JSON.parse(localStorage.getItem('hovet_residentes')) || INITIAL_RESIDENTES;
+        }
+
+        function saveResidentes(res) {
+            localStorage.setItem('hovet_residentes', JSON.stringify(res));
+        }
+
+        // --- RELÓGIO EM TEMPO REAL ---
+        function startClock() {
+            function update() {
+                const now = new Date();
+                const clockEl = document.getElementById('clockDisplay');
+                const dateEl = document.getElementById('dateDisplay');
+                
+                if (clockEl) {
+                    clockEl.innerText = now.toLocaleTimeString('pt-BR');
+                }
+                if (dateEl) {
+                    dateEl.innerText = now.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                }
+            }
+            update();
+            setInterval(update, 1000);
+        }
+
+        // --- NAVEGAÇÃO DE LOGIN ---
+        function setPerfilLogin(perfil) {
+            currentPerfilLogin = perfil;
+            const btnRes = document.getElementById('tabResidente');
+            const btnCoord = document.getElementById('tabCoordenador');
+            const inputEmail = document.getElementById('loginEmail');
+            
+            if (perfil === 'residente') {
+                btnRes.className = "flex-1 py-2 text-xs font-semibold rounded-lg text-slate-700 bg-white shadow-sm transition";
+                btnCoord.className = "flex-1 py-2 text-xs font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition";
+                inputEmail.value = "ana.silva@ufmt.br";
+            } else {
+                btnCoord.className = "flex-1 py-2 text-xs font-semibold rounded-lg text-slate-700 bg-white shadow-sm transition";
+                btnRes.className = "flex-1 py-2 text-xs font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition";
+                inputEmail.value = "coordenacao.hovet@ufmt.br";
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+
+            if (currentPerfilLogin === 'coordenador') {
+                usuarioLogado = COORDENADOR_USER;
+            } else {
+                const residentes = getResidentes();
+                usuarioLogado = residentes.find(r => r.email === email) || {
+                    id: Date.now(),
+                    nome: email.split('@')[0].replace('.', ' '),
+                    email: email,
+                    perfil: 'residente',
+                    homologado: false
+                };
+            }
+
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('userInfoHeader').classList.remove('hidden');
+            document.getElementById('userInfoHeader').classList.add('flex');
+            
+            document.getElementById('userNameHeader').innerText = usuarioLogado.nome;
+            document.getElementById('userRoleHeader').innerText = usuarioLogado.perfil === 'coordenador' ? 'Coordenador do HOVET' : 'Residente Médico Veterinário';
+
+            if (usuarioLogado.perfil === 'coordenador') {
+                document.getElementById('coordenadorView').classList.remove('hidden');
+                renderCoordenadorView();
+            } else {
+                document.getElementById('residenteView').classList.remove('hidden');
+                renderResidenteView();
+            }
+
+            showToast(`Bem-vindo, ${usuarioLogado.nome}!`);
+        }
+
+        function logout() {
+            usuarioLogado = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('userInfoHeader').classList.add('hidden');
+            document.getElementById('residenteView').classList.add('hidden');
+            document.getElementById('coordenadorView').classList.add('hidden');
+            showToast("Sessão encerada.");
+        }
+
+        // --- REGISTRO DE PONTO (RESIDENTE) ---
+        function registrarPonto(tipo) {
+            if (!usuarioLogado) return;
+
+            const setor = document.getElementById('selectSetor').value;
+            const novosPontos = getPontos();
+
+            const novoPonto = {
+                id: Date.now(),
+                residenteId: usuarioLogado.id,
+                setor: setor,
+                tipo: tipo,
+                timestamp: new Date().toISOString()
+            };
+
+            novosPontos.push(novoPonto);
+            savePontos(novosPontos);
+            showToast(`Ponto de ${tipo} registrado com sucesso!`);
+            renderResidenteView();
+        }
+
+        function renderResidenteView() {
+            const pontos = getPontos().filter(p => p.residenteId === usuarioLogado.id);
+            const tabela = document.getElementById('tabelaHistoricoResidente');
+            tabela.innerHTML = '';
+
+            // Ordenar por data decrescente
+            pontos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            let ultimoTipo = 'Nenhum';
+
+            if (pontos.length === 0) {
+                tabela.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Nenhum ponto registrado até o momento.</td></tr>`;
+            } else {
+                ultimoTipo = pontos[0].tipo;
+                pontos.forEach(p => {
+                    const dt = new Date(p.timestamp);
+                    const dataStr = dt.toLocaleDateString('pt-BR');
+                    const horaStr = dt.toLocaleTimeString('pt-BR');
+
+                    let colorClass = "bg-slate-100 text-slate-700";
+                    if (p.tipo === 'Entrada') colorClass = "bg-emerald-100 text-emerald-800";
+                    if (p.tipo === 'Saída Almoço') colorClass = "bg-amber-100 text-amber-800";
+                    if (p.tipo === 'Retorno Almoço') colorClass = "bg-blue-100 text-blue-800";
+                    if (p.tipo === 'Saída') colorClass = "bg-rose-100 text-rose-800";
+
+                    tabela.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-4 font-medium text-slate-800">${dataStr}</td>
+                            <td class="p-4 text-slate-600">${p.setor}</td>
+                            <td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold ${colorClass}">${p.tipo}</span></td>
+                            <td class="p-4 font-mono font-semibold text-slate-700">${horaStr}</td>
+                            <td class="p-4 text-xs text-slate-400">Registrado</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // Atualizar Status Badge
+            const badge = document.getElementById('statusHojeBadge');
+            badge.innerText = `Status: ${ultimoTipo}`;
+
+            // Calcular Horas Acumuladas Simulado
+            document.getElementById('totalHorasMes').innerText = `${Math.min(pontos.length * 2, 160)}h 00m`;
+        }
+
+        function exportarRelatorioPessoal() {
+            showToast("Relatório de frequência exportado em PDF com sucesso!");
+        }
+
+        // --- PAINEL DO COORDENADOR ---
+        function renderCoordenadorView() {
+            const residentes = getResidentes();
+            const todosPontos = getPontos();
+            const busca = document.getElementById('filterBusca').value.toLowerCase();
+            const tabela = document.getElementById('tabelaCoordenador');
+
+            tabela.innerHTML = '';
+
+            let countEmServico = 0;
+            let countEmIntervalo = 0;
+
+            residentes.forEach(res => {
+                const pontosRes = todosPontos.filter(p => p.residenteId === res.id)
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                const ultimoPonto = pontosRes[0];
+                let statusAtual = 'Fora de Serviço';
+                let setorAtual = '-';
+                let horaUltimo = '-';
+
+                if (ultimoPonto) {
+                    setorAtual = ultimoPonto.setor;
+                    horaUltimo = `${ultimoPonto.tipo} às ${new Date(ultimoPonto.timestamp).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+                    
+                    if (ultimoPonto.tipo === 'Entrada' || ultimoPonto.tipo === 'Retorno Almoço') {
+                        statusAtual = 'Em Serviço';
+                        countEmServico++;
+                    } else if (ultimoPonto.tipo === 'Saída Almoço') {
+                        statusAtual = 'Em Intervalo';
+                        countEmIntervalo++;
+                    }
+                }
+
+                // Filtragem rápida
+                if (busca && !res.nome.toLowerCase().includes(busca) && !setorAtual.toLowerCase().includes(busca)) {
+                    return;
+                }
+
+                const statusBadge = res.homologado 
+                    ? `<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">Homologado</span>`
+                    : `<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-semibold">Pendente</span>`;
+
+                tabela.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-4">
+                            <div class="font-bold text-slate-800">${res.nome}</div>
+                            <div class="text-xs text-slate-400">${res.email}</div>
+                        </td>
+                        <td class="p-4 text-slate-600 text-xs">${setorAtual}</td>
+                        <td class="p-4 text-xs font-medium text-slate-700">${horaUltimo}</td>
+                        <td class="p-4 font-mono text-xs font-bold text-teal-700">${pontosRes.length * 4}h 00m</td>
+                        <td class="p-4">${statusBadge}</td>
+                        <td class="p-4 text-center">
+                            <button onclick="toggleHomologacao(${res.id})" class="px-3 py-1.5 ${res.homologado ? 'bg-slate-200 text-slate-700 hover:bg-slate-300' : 'bg-teal-600 text-white hover:bg-teal-700'} rounded-lg text-xs font-semibold transition">
+                                ${res.homologado ? 'Desfazer' : 'Aprovar Espelho'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Atualizar Indicadores Globais
+            document.getElementById('statTotalResidentes').innerText = residentes.length;
+            document.getElementById('statEmServico').innerText = countEmServico;
+            document.getElementById('statEmIntervalo').innerText = countEmIntervalo;
+        }
+
+        function toggleHomologacao(residenteId) {
+            const residentes = getResidentes();
+            const index = residentes.findIndex(r => r.id === residenteId);
+            if (index !== -1) {
+                residentes[index].homologado = !residentes[index].homologado;
+                saveResidentes(residentes);
+                renderCoordenadorView();
+                showToast(`Status do espelho de ponto atualizado.`);
+            }
+        }
+
+        // --- SISTEMA DE TOAST ---
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            toastMsg.innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // --- INICIALIZAÇÃO ---
+        window.onload = function() {
+            lucide.createIcons();
+            startClock();
+            // Pré-carrega o email inicial de residente
+            setPerfilLogin('residente');
+        }
+    </script>
+</body>
+</html>
