@@ -113,9 +113,9 @@
             </select>
           </div>
 
-          <!-- BOTÕES DE REGISTRO DE PONTO -->
+          <!-- BOTÕES DE REGISTRO DE PONTO (CORRIGIDOS) -->
           <div>
-            <label class="block text-xs font-medium text-slate-700 mb-2">Selecione o Evento:</label>
+            <label class="block text-xs font-medium text-slate-700 mb-2">Clique no botão para registrar o ponto:</label>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <button type="button" onclick="registerPunch('Entrada')" id="btnEntrada" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50">
                 <i class="fa-solid fa-right-to-bracket mb-1 text-blue-600 block text-lg"></i>
@@ -325,8 +325,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v7')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v7')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v8')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v8')) || DEFAULT_PUNCHES;
 
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
@@ -378,7 +378,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v7', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v8', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -387,7 +387,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v7');
+      const session = localStorage.getItem('hovet_session_v8');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -398,7 +398,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v7');
+      localStorage.removeItem('hovet_session_v8');
       showLogin();
     }
 
@@ -452,7 +452,7 @@
         const last = userPunches[0].type;
         if (last === 'Entrada') recommended = btnSaidaAlmoco;
         else if (last === 'Saída para Almoço') recommended = btnVoltaAlmoco;
-        else if (last === 'Retorno do Almoço') recommended = btnSaída;
+        else if (last === 'Retorno do Almoço') recommended = btnSaida;
         else if (last === 'Saída') recommended = btnEntrada;
       }
 
@@ -602,7 +602,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v7', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v8', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -672,8 +672,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hov_users_v7', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v7', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v8', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v8', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
