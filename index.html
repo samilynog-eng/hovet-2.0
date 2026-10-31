@@ -81,7 +81,7 @@
         <div class="bg-blue-50/70 p-3 rounded-lg border border-blue-100 text-xs text-slate-600 space-y-1 mt-4">
           <p class="font-semibold text-blue-900 mb-1"><i class="fa-solid fa-circle-info me-1"></i> Contas de Simulação:</p>
           <p>• <strong>Residente:</strong> residente@ufmt.br (Senha: 123456)</p>
-          <p>• <strong>PRUMV (Coordenação):</strong> coord@ufmt.br (Senha: 123456)</p>
+          <p>• <strong>Coordenação (PRUMV):</strong> coord@ufmt.br (Senha: 123456)</p>
         </div>
       </form>
     </section>
@@ -319,15 +319,15 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v5')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v5')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v6')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v6')) || DEFAULT_PUNCHES;
 
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
       checkSession();
     });
 
-    // Força o fuso horário de Sinop - Mato Grosso (GMT-4 / America/Cuiaba)
+    // Função ajustada estritamente para o fuso de Sinop - MT (GMT-4 / America/Cuiaba)
     function getSinopDateTime() {
       const now = new Date();
       
@@ -346,7 +346,6 @@
 
         return { timeStr, dateIsoStr, dateFullStr };
       } catch (e) {
-        // Fallback caso o navegador tenha restrições de Intl
         return {
           timeStr: now.toLocaleTimeString('pt-BR'),
           dateIsoStr: now.toISOString().split('T')[0],
@@ -374,7 +373,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v5', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v6', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -383,7 +382,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v5');
+      const session = localStorage.getItem('hovet_session_v6');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -394,7 +393,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v5');
+      localStorage.removeItem('hovet_session_v6');
       showLogin();
     }
 
@@ -449,7 +448,7 @@
     function registerPunch() {
       const sinopNow = getSinopDateTime();
       const dateStr = sinopNow.dateIsoStr;
-      const timeStr = sinopNow.timeStr.substring(0, 5); // HH:MM
+      const timeStr = sinopNow.timeStr.substring(0, 5);
 
       const sector = document.getElementById('residentSector').value;
       const type = document.getElementById('punchType').value;
@@ -589,7 +588,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v5', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v6', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -659,8 +658,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v5', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v5', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v6', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v6', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
