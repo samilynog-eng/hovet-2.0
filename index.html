@@ -175,7 +175,7 @@
           <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div>
               <h2 class="text-xl font-bold text-slate-900">Relatório Consolidado Diário</h2>
-              <p class="text-sm text-slate-500">Visualização unificada por dia com múltiplos registros e justificativas integradas.</p>
+              <p class="text-sm text-slate-500">Visualização unificada por dia com suporte a múltiplos registros e justificativas integradas.</p>
             </div>
             
             <!-- FILTROS DO RELATÓRIO -->
@@ -377,8 +377,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v22')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v22')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v23')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v23')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -433,7 +433,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v22', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v23', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -442,7 +442,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v22');
+      const session = localStorage.getItem('hovet_session_v23');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -453,7 +453,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v22');
+      localStorage.removeItem('hovet_session_v23');
       showLogin();
     }
 
@@ -698,7 +698,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v22', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v23', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -821,8 +821,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v22', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v22', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v23', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v23', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
