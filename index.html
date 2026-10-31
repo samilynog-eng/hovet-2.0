@@ -204,9 +204,10 @@
       <!-- ABA 2 -->
       <div id="tabContentResidentes" class="hidden space-y-6">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-          <h3 class="text-lg font-bold text-slate-900 mb-2">Cadastrar Novo Residente</h3>
-          <p class="text-sm text-slate-500 mb-4">Adicione um novo médico veterinário definindo seu nome, e-mail, senha e setor principal de atuação.</p>
-          <form id="addResidentForm" onsubmit="handleAddResident(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <h3 id="formTitleResident" class="text-lg font-bold text-slate-900 mb-2">Cadastrar Novo Residente</h3>
+          <p id="formSubtitleResident" class="text-sm text-slate-500 mb-4">Adicione um novo médico veterinário definindo seu nome, e-mail, senha e setor principal de atuação.</p>
+          <form id="addResidentForm" onsubmit="handleSaveResident(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <input type="hidden" id="editResidentId">
             <div>
               <label class="block text-xs font-medium text-slate-700 mb-1">Nome Completo</label>
               <input type="text" id="newResidentName" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Dr. Nome Sobrenome">
@@ -216,7 +217,7 @@
               <input type="email" id="newResidentEmail" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="nome@ufmt.br">
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Senha Provisória</label>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Senha</label>
               <input type="password" id="newResidentPassword" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="••••••••">
             </div>
             <div>
@@ -233,8 +234,11 @@
                 <option value="Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos">Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos</option>
               </select>
             </div>
-            <div class="sm:col-span-2 md:col-span-4 flex justify-end">
-              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-sm cursor-pointer">
+            <div class="sm:col-span-2 md:col-span-4 flex justify-end space-x-2">
+              <button type="button" id="cancelEditBtn" onclick="resetResidentForm()" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-4 py-2 rounded-lg text-sm transition cursor-pointer">
+                Cancelar Edição
+              </button>
+              <button type="submit" id="submitResidentBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-sm cursor-pointer">
                 <i class="fa-solid fa-user-check me-1"></i> Cadastrar Residente
               </button>
             </div>
@@ -250,7 +254,7 @@
                   <th class="py-3 px-4">Nome</th>
                   <th class="py-3 px-4">E-mail</th>
                   <th class="py-3 px-4">Setor Principal</th>
-                  <th class="py-3 px-4 text-right">Ação</th>
+                  <th class="py-3 px-4 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody id="residentManageBody" class="divide-y divide-slate-100 text-sm"></tbody>
@@ -348,8 +352,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v18')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v18')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v19')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v19')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -404,7 +408,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v18', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v19', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -413,7 +417,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v18');
+      const session = localStorage.getItem('hovet_session_v19');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -424,7 +428,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v18');
+      localStorage.removeItem('hovet_session_v19');
       showLogin();
     }
 
@@ -593,39 +597,93 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v18', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v19', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
 
-    function handleAddResident(e) {
+    // Gerenciamento de Cadastro e Edição de Residentes
+    function handleSaveResident(e) {
       e.preventDefault();
+      const editId = document.getElementById('editResidentId').value;
       const name = document.getElementById('newResidentName').value.trim();
       const email = document.getElementById('newResidentEmail').value.trim();
       const pass = document.getElementById('newResidentPassword').value.trim();
       const sector = document.getElementById('newResidentSector').value;
 
-      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-        alert('Este e-mail já está cadastrado no sistema.');
-        return;
+      if (editId) {
+        // Editando residente existente
+        users = users.map(u => {
+          if (u.id === editId) {
+            return { ...u, name, email, pass, sector };
+          }
+          return u;
+        });
+
+        // Atualiza também o nome nos registros de ponto antigos para manter consistência
+        punches = punches.map(p => {
+          if (p.userId === editId) {
+            return { ...p, userName: name, sector: sector };
+          }
+          return p;
+        });
+
+        saveData();
+        populateResidentFilter();
+        renderResidentManagementList();
+        renderGeneralReport();
+        resetResidentForm();
+        alert(`Residente ${name} atualizado com sucesso!`);
+      } else {
+        // Cadastrando novo residente
+        if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+          alert('Este e-mail já está cadastrado no sistema.');
+          return;
+        }
+
+        const newRes = {
+          id: String(Date.now()),
+          name: name,
+          email: email,
+          pass: pass,
+          role: 'resident',
+          sector: sector
+        };
+
+        users.push(newRes);
+        saveData();
+        populateResidentFilter();
+        renderResidentManagementList();
+        resetResidentForm();
+        alert(`Residente ${name} cadastrado com sucesso!`);
       }
+    }
 
-      const newRes = {
-        id: String(Date.now()),
-        name: name,
-        email: email,
-        pass: pass,
-        role: 'resident',
-        sector: sector
-      };
+    function editResident(id) {
+      const res = users.find(u => u.id === id);
+      if (!res) return;
 
-      users.push(newRes);
-      saveData();
-      populateResidentFilter();
-      renderResidentManagementList();
+      document.getElementById('editResidentId').value = res.id;
+      document.getElementById('newResidentName').value = res.name;
+      document.getElementById('newResidentEmail').value = res.email;
+      document.getElementById('newResidentPassword').value = res.pass;
+      document.getElementById('newResidentSector').value = res.sector;
 
+      document.getElementById('formTitleResident').innerText = `Editar Residente: ${res.name}`;
+      document.getElementById('formSubtitleResident').innerText = `Altere as informações abaixo e clique em Salvar Alterações.`;
+      document.getElementById('submitResidentBtn').innerHTML = `<i class="fa-solid fa-floppy-disk me-1"></i> Salvar Alterações`;
+      document.getElementById('cancelEditBtn').classList.remove('hidden');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetResidentForm() {
       document.getElementById('addResidentForm').reset();
-      alert(`Residente ${name} cadastrado com sucesso!`);
+      document.getElementById('editResidentId').value = '';
+      document.getElementById('formTitleResident').innerText = 'Cadastrar Novo Residente';
+      document.getElementById('formSubtitleResident').innerText = 'Adicione um novo médico veterinário definindo seu nome, e-mail, senha e setor principal de atuação.';
+      document.getElementById('submitResidentBtn').innerHTML = `<i class="fa-solid fa-user-check me-1"></i> Cadastrar Residente`;
+      document.getElementById('cancelEditBtn').classList.add('hidden');
     }
 
     function renderResidentManagementList() {
@@ -642,7 +700,10 @@
           <td class="py-3 px-4 font-medium text-slate-900">${r.name}</td>
           <td class="py-3 px-4 text-slate-600">${r.email}</td>
           <td class="py-3 px-4 text-slate-600">${r.sector}</td>
-          <td class="py-3 px-4 text-right">
+          <td class="py-3 px-4 text-right space-x-2">
+            <button onclick="editResident('${r.id}')" class="text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1.5 rounded-lg transition cursor-pointer" title="Editar Perfil">
+              <i class="fa-solid fa-pen text-sm me-1"></i> Editar
+            </button>
             <button onclick="deleteResident('${r.id}', '${r.name}')" class="text-xs text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded-lg transition cursor-pointer" title="Excluir Perfil">
               <i class="fa-solid fa-trash-can text-sm me-1"></i> Excluir
             </button>
@@ -663,8 +724,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v18', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v18', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v19', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v19', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
