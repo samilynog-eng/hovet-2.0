@@ -175,7 +175,7 @@
           <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div>
               <h2 class="text-xl font-bold text-slate-900">Relatório Consolidado Diário</h2>
-              <p class="text-sm text-slate-500">Visualização unificada por dia com horários, plantões e justificativas integradas.</p>
+              <p class="text-sm text-slate-500">Visualização unificada por dia com múltiplos registros e justificativas integradas.</p>
             </div>
             
             <!-- FILTROS DO RELATÓRIO -->
@@ -377,8 +377,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v21')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v21')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v22')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v22')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -433,7 +433,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v21', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v22', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -442,7 +442,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v21');
+      const session = localStorage.getItem('hovet_session_v22');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -453,7 +453,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v21');
+      localStorage.removeItem('hovet_session_v22');
       showLogin();
     }
 
@@ -550,7 +550,7 @@
           <td class="py-3 px-4 font-semibold text-blue-600">${p.time}</td>
           <td class="py-3 px-4">${p.type}</td>
           <td class="py-3 px-4 text-slate-600">${p.sector}</td>
-          <td class="py-3 px-4 text-slate-500 italic text-xs">${p.justification || 'Nenhuma'}</td>
+          <td class="py-3 px-4 text-slate-700 text-xs">${p.justification || 'Nenhuma'}</td>
         </tr>
       `).join('');
     }
@@ -615,7 +615,7 @@
         filteredPunches = filteredPunches.filter(p => p.date <= dateEnd);
       }
 
-      // Agrupa os registros por Residente + Data para exibir na mesma linha
+      // Agrupa todos os registros por Residente + Data suportando múltiplos lançamentos
       const grouped = {};
       filteredPunches.forEach(p => {
         const key = `${p.userId}_${p.date}`;
@@ -624,22 +624,22 @@
             userName: p.userName,
             date: p.date,
             sector: p.sector,
-            entrada: { time: '--:--', just: '' },
-            saidaAlmoco: { time: '--:--', just: '' },
-            voltaAlmoco: { time: '--:--', just: '' },
-            saida: { time: '--:--', just: '' },
-            entradaPlantao: { time: '--:--', just: '' },
-            saidaPlantao: { time: '--:--', just: '' }
+            entrada: [],
+            saidaAlmoco: [],
+            voltaAlmoco: [],
+            saida: [],
+            entradaPlantao: [],
+            saidaPlantao: []
           };
         }
 
         const slot = { time: p.time, just: p.justification || '' };
-        if (p.type === 'Entrada') grouped[key].entrada = slot;
-        else if (p.type === 'Saída para Almoço') grouped[key].saidaAlmoco = slot;
-        else if (p.type === 'Retorno do Almoço') grouped[key].voltaAlmoco = slot;
-        else if (p.type === 'Saída') grouped[key].saida = slot;
-        else if (p.type === 'Entrada Plantão') grouped[key].entradaPlantao = slot;
-        else if (p.type === 'Saída Plantão') grouped[key].saidaPlantao = slot;
+        if (p.type === 'Entrada') grouped[key].entrada.push(slot);
+        else if (p.type === 'Saída para Almoço') grouped[key].saidaAlmoco.push(slot);
+        else if (p.type === 'Retorno do Almoço') grouped[key].voltaAlmoco.push(slot);
+        else if (p.type === 'Saída') grouped[key].saida.push(slot);
+        else if (p.type === 'Entrada Plantão') grouped[key].entradaPlantao.push(slot);
+        else if (p.type === 'Saída Plantão') grouped[key].saidaPlantao.push(slot);
       });
 
       const reportArray = Object.values(grouped);
@@ -649,13 +649,16 @@
         return;
       }
 
-      const formatCell = (cellData) => {
-        if (cellData.time === '--:--') return '<span class="text-slate-300">--:--</span>';
-        let html = `<span class="font-semibold text-slate-800">${cellData.time}</span>`;
-        if (cellData.just) {
-          html += `<span class="block text-[11px] text-amber-800 bg-amber-50 p-1 rounded mt-1 border border-amber-200 italic" title="${cellData.just}">${cellData.just}</span>`;
-        }
-        return html;
+      const formatMultiCell = (cellArray) => {
+        if (!cellArray || cellArray.length === 0) return '<span class="text-slate-300">--:--</span>';
+        return cellArray.map(item => {
+          let html = `<div class="mb-1 last:mb-0"><span class="font-semibold text-slate-800">${item.time}</span>`;
+          if (item.just) {
+            html += `<span class="block text-[11px] text-slate-700 bg-amber-50 p-1 rounded mt-0.5 border border-amber-200" title="${item.just}">${item.just}</span>`;
+          }
+          html += `</div>`;
+          return html;
+        }).join('');
       };
 
       tbody.innerHTML = reportArray.map(r => `
@@ -663,12 +666,12 @@
           <td class="py-3 px-3 font-medium text-slate-900">${r.userName}</td>
           <td class="py-3 px-3 text-slate-600">${formatDate(r.date)}</td>
           <td class="py-3 px-3 text-slate-600">${r.sector}</td>
-          <td class="py-3 px-3 text-center bg-slate-50/50">${formatCell(r.entrada)}</td>
-          <td class="py-3 px-3 text-center bg-slate-50/50">${formatCell(r.saidaAlmoco)}</td>
-          <td class="py-3 px-3 text-center bg-slate-50/50">${formatCell(r.voltaAlmoco)}</td>
-          <td class="py-3 px-3 text-center bg-slate-50/50">${formatCell(r.saida)}</td>
-          <td class="py-3 px-3 text-center bg-blue-50/30">${formatCell(r.entradaPlantao)}</td>
-          <td class="py-3 px-3 text-center bg-amber-50/30">${formatCell(r.saidaPlantao)}</td>
+          <td class="py-3 px-3 text-center bg-slate-50/50 align-top">${formatMultiCell(r.entrada)}</td>
+          <td class="py-3 px-3 text-center bg-slate-50/50 align-top">${formatMultiCell(r.saidaAlmoco)}</td>
+          <td class="py-3 px-3 text-center bg-slate-50/50 align-top">${formatMultiCell(r.voltaAlmoco)}</td>
+          <td class="py-3 px-3 text-center bg-slate-50/50 align-top">${formatMultiCell(r.saida)}</td>
+          <td class="py-3 px-3 text-center bg-blue-50/30 align-top">${formatMultiCell(r.entradaPlantao)}</td>
+          <td class="py-3 px-3 text-center bg-amber-50/30 align-top">${formatMultiCell(r.saidaPlantao)}</td>
         </tr>
       `).join('');
     }
@@ -695,7 +698,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v21', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v22', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -818,8 +821,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v21', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v21', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v22', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v22', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
