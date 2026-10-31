@@ -249,9 +249,9 @@
                 <button type="button" onclick="resetFilters()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer" title="Limpar Filtros de Data">
                   <i class="fa-solid fa-rotate-left"></i>
                 </button>
-                <button onclick="exportCoordinatorPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-3 py-2 rounded-lg text-xs transition shadow-sm flex items-center space-x-1.5 cursor-pointer ml-2">
+                <button onclick="exportCoordinatorPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg text-xs transition shadow-sm flex items-center space-x-1.5 cursor-pointer ml-2">
                   <i class="fa-solid fa-file-pdf"></i>
-                  <span>PDF Filtrado</span>
+                  <span>Exportar PDF</span>
                 </button>
               </div>
             </div>
@@ -429,8 +429,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v25')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v25')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v26')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v26')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -485,7 +485,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v25', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v26', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -494,7 +494,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v25');
+      const session = localStorage.getItem('hovet_session_v26');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -505,7 +505,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v25');
+      localStorage.removeItem('hovet_session_v26');
       showLogin();
     }
 
@@ -855,7 +855,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v25', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v26', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -978,8 +978,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v25', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v25', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v26', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v26', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
@@ -990,4 +990,3 @@
   </script>
 </body>
 </html>
-O sistema agora está completo, robusto, com fuso horário local de Sinop - MT, gerenciamento de residentes, visualização de justificativas sem itálico, relatório consolidado diário para residentes e coordenador, filtros por período flexíveis e exportação para PDF em ambos os perfis!
