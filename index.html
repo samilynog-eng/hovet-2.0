@@ -206,7 +206,10 @@
     <!-- PAINEL DO COORDENADOR -->
     <section id="coordinatorDashboard" class="hidden space-y-6">
       <div class="flex flex-wrap gap-2 border-b border-slate-200">
-        <button id="tabBtnRelatorio" onclick="switchCoordTab('relatorio')" class="py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer">
+        <button id="tabBtnCards" onclick="switchCoordTab('cards')" class="py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer">
+          <i class="fa-solid fa-chart-pie me-1.5"></i> Painel Geral (Cards)
+        </button>
+        <button id="tabBtnRelatorio" onclick="switchCoordTab('relatorio')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer">
           <i class="fa-solid fa-table-list me-1.5"></i> Relatório Geral de Pontos
         </button>
         <button id="tabBtnResidentes" onclick="switchCoordTab('residentes')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer">
@@ -217,8 +220,61 @@
         </button>
       </div>
 
-      <!-- ABA 1 DO COORDENADOR -->
-      <div id="tabContentRelatorio" class="space-y-6">
+      <!-- ABA 1 DO COORDENADOR: CARDS DE STATUS -->
+      <div id="tabContentCards" class="space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Visão Geral dos Residentes</h2>
+          <p class="text-sm text-slate-500">Indicadores em tempo real para o dia de hoje (Horário de Sinop-MT).</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <!-- CARD 1 -->
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Residentes Ativos</span>
+              <div id="cardTotalActive" class="text-3xl font-extrabold text-blue-600">0</div>
+              <span class="text-[11px] text-slate-500 mt-1 block">Total de residentes cadastrados</span>
+            </div>
+            <div class="bg-blue-50 text-blue-600 p-4 rounded-xl text-2xl">
+              <i class="fa-solid fa-user-doctor"></i>
+            </div>
+          </div>
+
+          <!-- CARD 2 -->
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Em Serviço</span>
+              <div id="cardOnDuty" class="text-3xl font-extrabold text-emerald-600">0</div>
+              <span class="text-[11px] text-slate-500 mt-1 block">Trabalhando no momento</span>
+            </div>
+            <div class="bg-emerald-50 text-emerald-600 p-4 rounded-xl text-2xl">
+              <i class="fa-solid fa-stethoscope"></i>
+            </div>
+          </div>
+
+          <!-- CARD 3 -->
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Em Intervalo</span>
+              <div id="cardOnBreak" class="text-3xl font-extrabold text-amber-600">0</div>
+              <span class="text-[11px] text-slate-500 mt-1 block">No horário de almoço</span>
+            </div>
+            <div class="bg-amber-50 text-amber-600 p-4 rounded-xl text-2xl">
+              <i class="fa-solid fa-utensils"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mt-6">
+          <h3 class="text-base font-bold text-slate-900 mb-3"><i class="fa-solid fa-circle-info text-blue-600 me-2"></i> Como funcionam os indicadores?</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Os números acima calculam automaticamente a situação de cada médico veterinário residente com base nos lançamentos feitos na data de hoje. Um residente é considerado <strong>"Em Serviço"</strong> quando realizou entrada recente sem término de expediente/plantão, e <strong>"Em Intervalo"</strong> caso tenha saído para o almoço e ainda não retornado.
+          </p>
+        </div>
+      </div>
+
+      <!-- ABA 2 DO COORDENADOR: RELATÓRIO GERAL -->
+      <div id="tabContentRelatorio" class="hidden space-y-6">
         <div id="coordinatorPrintArea" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
           <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
@@ -278,7 +334,7 @@
         </div>
       </div>
 
-      <!-- ABA 2 DO COORDENADOR -->
+      <!-- ABA 3 DO COORDENADOR -->
       <div id="tabContentResidentes" class="hidden space-y-6">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <h3 id="formTitleResident" class="text-lg font-bold text-slate-900 mb-2">Cadastrar Novo Residente</h3>
@@ -340,7 +396,7 @@
         </div>
       </div>
 
-      <!-- ABA 3 DO COORDENADOR -->
+      <!-- ABA 4 DO COORDENADOR -->
       <div id="tabContentPerfil" class="hidden space-y-6 max-w-xl">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <h3 class="text-lg font-bold text-slate-900 mb-2">Editar Meu Perfil (Coordenação)</h3>
@@ -429,8 +485,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v26')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v26')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v27')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v27')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -485,7 +541,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v26', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v27', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -494,7 +550,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v26');
+      const session = localStorage.getItem('hovet_session_v27');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -505,7 +561,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v26');
+      localStorage.removeItem('hovet_session_v27');
       showLogin();
     }
 
@@ -543,9 +599,10 @@
           document.getElementById('filterDateEnd').value = todayIso;
         }
 
+        updateDashboardCards();
         renderGeneralReport();
         renderResidentManagementList();
-        switchCoordTab('relatorio');
+        switchCoordTab('cards');
       }
     }
 
@@ -714,15 +771,21 @@
     }
 
     function switchCoordTab(tab) {
+      document.getElementById('tabContentCards').classList.add('hidden');
       document.getElementById('tabContentRelatorio').classList.add('hidden');
       document.getElementById('tabContentResidentes').classList.add('hidden');
       document.getElementById('tabContentPerfil').classList.add('hidden');
 
+      document.getElementById('tabBtnCards').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer";
       document.getElementById('tabBtnRelatorio').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer";
       document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer";
       document.getElementById('tabBtnPerfil').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer";
 
-      if (tab === 'relatorio') {
+      if (tab === 'cards') {
+        document.getElementById('tabContentCards').classList.remove('hidden');
+        document.getElementById('tabBtnCards').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer";
+        updateDashboardCards();
+      } else if (tab === 'relatorio') {
         document.getElementById('tabContentRelatorio').classList.remove('hidden');
         document.getElementById('tabBtnRelatorio').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer";
       } else if (tab === 'residentes') {
@@ -732,6 +795,34 @@
         document.getElementById('tabContentPerfil').classList.remove('hidden');
         document.getElementById('tabBtnPerfil').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer";
       }
+    }
+
+    function updateDashboardCards() {
+      const residents = users.filter(u => u.role === 'resident');
+      const totalActive = residents.length;
+      document.getElementById('cardTotalActive').innerText = totalActive;
+
+      const todayIso = getSinopDateTime().dateIsoStr;
+      let onDutyCount = 0;
+      let onBreakCount = 0;
+
+      residents.forEach(res => {
+        const todayPunches = punches.filter(p => p.userId === res.id && p.date === todayIso);
+        if (todayPunches.length === 0) return;
+
+        // Ordena por horário cronológico
+        todayPunches.sort((a, b) => a.time.localeCompare(b.time));
+        const lastPunch = todayPunches[todayPunches.length - 1];
+
+        if (lastPunch.type === 'Entrada' || lastPunch.type === 'Retorno do Almoço' || lastPunch.type === 'Entrada Plantão') {
+          onDutyCount++;
+        } else if (lastPunch.type === 'Saída para Almoço') {
+          onBreakCount++;
+        }
+      });
+
+      document.getElementById('cardOnDuty').innerText = onDutyCount;
+      document.getElementById('cardOnBreak').innerText = onBreakCount;
     }
 
     function populateResidentFilter() {
@@ -855,7 +946,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v26', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v27', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -887,6 +978,7 @@
         populateResidentFilter();
         renderResidentManagementList();
         renderGeneralReport();
+        updateDashboardCards();
         resetResidentForm();
         alert(`Residente ${name} atualizado com sucesso!`);
       } else {
@@ -908,6 +1000,7 @@
         saveData();
         populateResidentFilter();
         renderResidentManagementList();
+        updateDashboardCards();
         resetResidentForm();
         alert(`Residente ${name} cadastrado com sucesso!`);
       }
@@ -974,12 +1067,13 @@
         populateResidentFilter();
         renderGeneralReport();
         renderResidentManagementList();
+        updateDashboardCards();
       }
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v26', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v26', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v27', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v27', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
