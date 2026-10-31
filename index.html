@@ -172,17 +172,36 @@
       <!-- ABA 1 -->
       <div id="tabContentRelatorio" class="space-y-6">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div>
               <h2 class="text-xl font-bold text-slate-900">Relatório Geral de Frequência</h2>
-              <p class="text-sm text-slate-500">Histórico completo e detalhado de todas as marcações e justificativas dos residentes.</p>
+              <p class="text-sm text-slate-500">Histórico completo e detalhado com filtro por período e residente.</p>
             </div>
-            <div class="flex items-center space-x-3">
-              <select id="filterResidentRelatorio" onchange="renderGeneralReport()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-2">
-                <option value="ALL">Todos os Residentes</option>
-              </select>
+            
+            <!-- FILTROS DO RELATÓRIO -->
+            <div class="flex flex-wrap items-center gap-3">
+              <div>
+                <label class="block text-[11px] font-medium text-slate-500 mb-0.5">Residente</label>
+                <select id="filterResidentRelatorio" onchange="renderGeneralReport()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                  <option value="ALL">Todos os Residentes</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-500 mb-0.5">Data Início</label>
+                <input type="date" id="filterDateStart" onchange="renderGeneralReport()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-500 mb-0.5">Data Fim</label>
+                <input type="date" id="filterDateEnd" onchange="renderGeneralReport()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              </div>
+              <div class="flex items-end">
+                <button type="button" onclick="resetFilters()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer" title="Limpar Filtros de Data">
+                  <i class="fa-solid fa-rotate-left me-1"></i> Limpar Datas
+                </button>
+              </div>
             </div>
           </div>
+
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
@@ -352,8 +371,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v19')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v19')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v20')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v20')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -408,7 +427,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v19', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v20', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -417,7 +436,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v19');
+      const session = localStorage.getItem('hovet_session_v20');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -428,7 +447,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v19');
+      localStorage.removeItem('hovet_session_v20');
       showLogin();
     }
 
@@ -455,6 +474,16 @@
         document.getElementById('coordEmailInput').value = currentUser.email;
         document.getElementById('coordPasswordInput').value = '';
         populateResidentFilter();
+        
+        // Inicializa os filtros de data com a data atual de Sinop
+        const todayIso = getSinopDateTime().dateIsoStr;
+        if (!document.getElementById('filterDateStart').value) {
+          document.getElementById('filterDateStart').value = todayIso;
+        }
+        if (!document.getElementById('filterDateEnd').value) {
+          document.getElementById('filterDateEnd').value = todayIso;
+        }
+
         renderGeneralReport();
         renderResidentManagementList();
         switchCoordTab('relatorio');
@@ -549,17 +578,38 @@
         residents.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
     }
 
+    function resetFilters() {
+      document.getElementById('filterResidentRelatorio').value = 'ALL';
+      document.getElementById('filterDateStart').value = '';
+      document.getElementById('filterDateEnd').value = '';
+      renderGeneralReport();
+    }
+
     function renderGeneralReport() {
       const tbody = document.getElementById('generalReportBody');
       const filterId = document.getElementById('filterResidentRelatorio').value;
+      const dateStart = document.getElementById('filterDateStart').value;
+      const dateEnd = document.getElementById('filterDateEnd').value;
 
       let filteredPunches = punches;
+
+      // Filtro por residente
       if (filterId !== 'ALL') {
-        filteredPunches = punches.filter(p => p.userId === filterId);
+        filteredPunches = filteredPunches.filter(p => p.userId === filterId);
+      }
+
+      // Filtro por data início
+      if (dateStart) {
+        filteredPunches = filteredPunches.filter(p => p.date >= dateStart);
+      }
+
+      // Filtro por data fim
+      if (dateEnd) {
+        filteredPunches = filteredPunches.filter(p => p.date <= dateEnd);
       }
 
       if (filteredPunches.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Nenhum registro para exibir.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Nenhum registro encontrado para o filtro selecionado.</td></tr>`;
         return;
       }
 
@@ -570,7 +620,7 @@
           <td class="py-3 px-4 font-semibold text-blue-600">${p.time}</td>
           <td class="py-3 px-4 text-slate-800 font-medium">${p.type}</td>
           <td class="py-3 px-4 text-slate-600">${p.sector}</td>
-          <td class="py-3 px-4 text-slate-600 italic text-xs">${p.justification || '<span class="text-slate-400 not-italic">Nenhuma justificativa</span>'}</td>
+          <td class="py-3 px-4 text-slate-600 text-xs">${p.justification ? `<span class="italic bg-amber-50 text-amber-900 px-2 py-1 rounded border border-amber-200 block">${p.justification}</span>` : '<span class="text-slate-400 italic">Nenhuma justificativa</span>'}</td>
         </tr>
       `).join('');
     }
@@ -597,12 +647,11 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v19', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v20', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
 
-    // Gerenciamento de Cadastro e Edição de Residentes
     function handleSaveResident(e) {
       e.preventDefault();
       const editId = document.getElementById('editResidentId').value;
@@ -612,7 +661,6 @@
       const sector = document.getElementById('newResidentSector').value;
 
       if (editId) {
-        // Editando residente existente
         users = users.map(u => {
           if (u.id === editId) {
             return { ...u, name, email, pass, sector };
@@ -620,7 +668,6 @@
           return u;
         });
 
-        // Atualiza também o nome nos registros de ponto antigos para manter consistência
         punches = punches.map(p => {
           if (p.userId === editId) {
             return { ...p, userName: name, sector: sector };
@@ -635,7 +682,6 @@
         resetResidentForm();
         alert(`Residente ${name} atualizado com sucesso!`);
       } else {
-        // Cadastrando novo residente
         if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
           alert('Este e-mail já está cadastrado no sistema.');
           return;
@@ -724,8 +770,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v19', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v19', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v20', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v20', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
