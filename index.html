@@ -81,7 +81,7 @@
         <div class="bg-blue-50/70 p-3 rounded-lg border border-blue-100 text-xs text-slate-600 space-y-1 mt-4">
           <p class="font-semibold text-blue-900 mb-1"><i class="fa-solid fa-circle-info me-1"></i> Contas de Simulação:</p>
           <p>• <strong>Residente:</strong> residente@ufmt.br (Senha: 123456)</p>
-          <p>• <strong>PRUMV (Coordenação):</strong> coord@ufmt.br (Senha: 123456)</p>
+          <p>• <strong>Coordenação (PRUMV):</strong> coord@ufmt.br (Senha: 123456)</p>
         </div>
       </form>
     </section>
@@ -348,8 +348,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v2')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v2')) || DEFAULT_PUNCHES;
 
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
@@ -375,7 +375,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v2', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -384,7 +384,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session');
+      const session = localStorage.getItem('hovet_session_v2');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -395,7 +395,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session');
+      localStorage.removeItem('hovet_session_v2');
       showLogin();
       document.getElementById('loginEmail').value = '';
       document.getElementById('loginPassword').value = '';
@@ -412,7 +412,7 @@
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('userHeaderInfo').classList.remove('hidden');
       document.getElementById('userName').innerText = currentUser.name;
-      document.getElementById('userRole').innerText = currentUser.role === 'coordinator' ? 'PRUMV' : 'Residente';
+      document.getElementById('userRole').innerText = currentUser.role === 'coordinator' ? 'COORDENAÇÃO' : 'Residente';
 
       if (currentUser.role === 'resident') {
         document.getElementById('residentDashboard').classList.remove('hidden');
@@ -597,7 +597,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v2', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
     }
 
@@ -665,8 +665,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users', JSON.stringify(users));
-      localStorage.setItem('hovet_punches', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v2', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v2', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
