@@ -95,27 +95,35 @@
               <span class="w-2 h-2 rounded-full bg-blue-500 me-1.5 animate-pulse"></span> Sistema Ativo (Horário Sinop - MT)
             </span>
             <h2 class="text-2xl font-bold text-slate-900">Registro de Frequência</h2>
-            <p class="text-sm text-slate-500">Selecione o tipo de evento abaixo para registrar sua frequência no turno.</p>
+            <p class="text-sm text-slate-500">Selecione o tipo de evento abaixo para registrar sua frequência no turno ou plantão.</p>
           </div>
 
           <!-- BOTÕES DE REGISTRO DE PONTO -->
           <div class="pt-2">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <button type="button" onclick="openJustificationModal('Entrada')" id="btnEntrada" class="p-3.5 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <button type="button" onclick="openJustificationModal('Entrada')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                 <i class="fa-solid fa-right-to-bracket mb-1 text-blue-600 block text-lg"></i>
                 Entrada
               </button>
-              <button type="button" onclick="openJustificationModal('Saída para Almoço')" id="btnSaidaAlmoco" class="p-3.5 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+              <button type="button" onclick="openJustificationModal('Saída para Almoço')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                 <i class="fa-solid fa-utensils mb-1 text-amber-600 block text-lg"></i>
                 Saída Almoço
               </button>
-              <button type="button" onclick="openJustificationModal('Retorno do Almoço')" id="btnVoltaAlmoco" class="p-3.5 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+              <button type="button" onclick="openJustificationModal('Retorno do Almoço')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                 <i class="fa-solid fa-arrow-rotate-left mb-1 text-emerald-600 block text-lg"></i>
                 Volta Almoço
               </button>
-              <button type="button" onclick="openJustificationModal('Saída')" id="btnSaida" class="p-3.5 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+              <button type="button" onclick="openJustificationModal('Saída')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                 <i class="fa-solid fa-right-from-bracket mb-1 text-red-600 block text-lg"></i>
-                Saída Turno
+                Saída
+              </button>
+              <button type="button" onclick="openJustificationModal('Entrada Plantão')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-blue-50/60 text-blue-900 hover:border-blue-500 hover:bg-blue-100 cursor-pointer">
+                <i class="fa-solid fa-business-time mb-1 text-blue-600 block text-lg"></i>
+                Entrada Plantão
+              </button>
+              <button type="button" onclick="openJustificationModal('Saída Plantão')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-amber-50/60 text-amber-900 hover:border-amber-500 hover:bg-amber-100 cursor-pointer">
+                <i class="fa-solid fa-hourglass-end mb-1 text-amber-600 block text-lg"></i>
+                Saída Plantão
               </button>
             </div>
           </div>
@@ -167,7 +175,7 @@
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div>
               <h2 class="text-xl font-bold text-slate-900">Relatório Geral Consolidado</h2>
-              <p class="text-sm text-slate-500">Visualização unificada de entradas e saídas com justificativas.</p>
+              <p class="text-sm text-slate-500">Visualização unificada de entradas, saídas e plantões com justificativas.</p>
             </div>
             <div class="flex items-center space-x-3">
               <select id="filterResidentRelatorio" onchange="renderGeneralReport()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-2">
@@ -186,6 +194,7 @@
                   <th class="py-3 px-4 text-center bg-slate-50/50">Saída Almoço</th>
                   <th class="py-3 px-4 text-center bg-slate-50/50">Volta Almoço</th>
                   <th class="py-3 px-4 text-center bg-slate-50/50">Saída</th>
+                  <th class="py-3 px-4 text-center bg-blue-50/50">Plantão</th>
                 </tr>
               </thead>
               <tbody id="generalReportBody" class="divide-y divide-slate-100 text-sm"></tbody>
@@ -295,7 +304,7 @@
 
       <div>
         <label class="block text-xs font-medium text-slate-700 mb-1">Deseja adicionar alguma justificativa? (Opcional)</label>
-        <textarea id="punchJustification" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" placeholder="Ex: Atraso devido a atendimento cirúrgico prolongado..."></textarea>
+        <textarea id="punchJustification" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" placeholder="Ex: Plantão extra, atendimento prolongado..."></textarea>
       </div>
 
       <div class="flex justify-end space-x-3 pt-2">
@@ -341,8 +350,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v12')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v12')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v14')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v14')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -397,7 +406,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v12', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v14', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -406,7 +415,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v12');
+      const session = localStorage.getItem('hovet_session_v14');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -417,7 +426,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v12');
+      localStorage.removeItem('hovet_session_v14');
       showLogin();
     }
 
@@ -438,7 +447,6 @@
         document.getElementById('residentDashboard').classList.remove('hidden');
         document.getElementById('coordinatorDashboard').classList.add('hidden');
         renderResidentHistory();
-        highlightNextButton();
       } else {
         document.getElementById('coordinatorDashboard').classList.remove('hidden');
         document.getElementById('residentDashboard').classList.add('hidden');
@@ -451,33 +459,6 @@
       }
     }
 
-    function highlightNextButton() {
-      const userPunches = punches.filter(p => p.userId === currentUser.id);
-      
-      const btnEntrada = document.getElementById('btnEntrada');
-      const btnSaidaAlmoco = document.getElementById('btnSaidaAlmoco');
-      const btnVoltaAlmoco = document.getElementById('btnVoltaAlmoco');
-      const btnSaida = document.getElementById('btnSaida');
-
-      [btnEntrada, btnSaidaAlmoco, btnVoltaAlmoco, btnSaida].forEach(b => {
-        if (b) b.className = "p-3.5 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer";
-      });
-
-      let recommended = btnEntrada;
-      if (userPunches.length > 0) {
-        const last = userPunches[0].type;
-        if (last === 'Entrada') recommended = btnSaidaAlmoco;
-        else if (last === 'Saída para Almoço') recommended = btnVoltaAlmoco;
-        else if (last === 'Retorno do Almoço') recommended = btnSaida;
-        else if (last === 'Saída') recommended = btnEntrada;
-      }
-
-      if (recommended) {
-        recommended.className = "p-3.5 rounded-xl border-2 border-blue-600 text-center font-semibold text-sm transition bg-blue-50 text-blue-900 shadow-sm ring-2 ring-blue-100 cursor-pointer";
-      }
-    }
-
-    // Abre a janela de justificativa utilizando o setor fixo cadastrado do residente
     window.openJustificationModal = function(type) {
       selectedPunchType = type;
       const sinopNow = getSinopDateTime();
@@ -492,7 +473,6 @@
       document.getElementById('justificationModal').classList.add('hidden');
     }
 
-    // Confirma e registra o ponto utilizando o setor fixo do cadastro
     window.confirmPunchWithJustification = function() {
       const sinopNow = getSinopDateTime();
       const dateStr = sinopNow.dateIsoStr;
@@ -514,7 +494,6 @@
       punches.unshift(newPunch);
       saveData();
       renderResidentHistory();
-      highlightNextButton();
       closeJustificationModal();
 
       alert(`Ponto registrado com sucesso (Horário de Sinop-MT)!\nTipo: ${selectedPunchType} | Horário: ${timeStr}`);
@@ -588,7 +567,8 @@
             entrada: '--:--',
             saidaAlmoco: '--:--',
             voltaAlmoco: '--:--',
-            saida: '--:--'
+            saida: '--:--',
+            plantao: '--:--'
           };
         }
         let timeDisplay = p.time;
@@ -600,12 +580,15 @@
         if (p.type === 'Saída para Almoço') grouped[key].saidaAlmoco = timeDisplay;
         if (p.type === 'Retorno do Almoço') grouped[key].voltaAlmoco = timeDisplay;
         if (p.type === 'Saída') grouped[key].saida = timeDisplay;
+        if (p.type === 'Entrada Plantão' || p.type === 'Saída Plantão') {
+          grouped[key].plantao = `${p.type.replace(' Plantão', '')}: ${timeDisplay}`;
+        }
       });
 
       const reportArray = Object.values(grouped);
 
       if (reportArray.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">Nenhum registro para exibir.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="py-4 text-center text-slate-400">Nenhum registro para exibir.</td></tr>`;
         return;
       }
 
@@ -618,6 +601,7 @@
           <td class="py-3 px-4 text-center text-amber-600 bg-slate-50/50">${r.saidaAlmoco}</td>
           <td class="py-3 px-4 text-center text-blue-600 bg-slate-50/50">${r.voltaAlmoco}</td>
           <td class="py-3 px-4 text-center font-semibold text-slate-700 bg-slate-50/50">${r.saida}</td>
+          <td class="py-3 px-4 text-center font-medium text-blue-800 bg-blue-50/50">${r.plantao}</td>
         </tr>
       `).join('');
     }
@@ -644,7 +628,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v12', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v14', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -714,8 +698,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v12', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v12', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v14', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v14', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
