@@ -36,7 +36,7 @@
           <span id="userName" class="block font-medium text-sm text-slate-800"></span>
           <span id="userRole" class="block text-xs text-blue-600 font-semibold uppercase"></span>
         </div>
-        <button onclick="logout()" class="p-2 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded-lg transition" title="Sair">
+        <button onclick="logout()" class="p-2 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded-lg transition cursor-pointer" title="Sair">
           <i class="fa-solid fa-right-from-bracket text-lg"></i>
         </button>
       </div>
@@ -74,7 +74,7 @@
           E-mail ou senha incorretos. Tente novamente.
         </div>
 
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow-sm">
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow-sm cursor-pointer">
           Entrar
         </button>
 
@@ -95,41 +95,26 @@
               <span class="w-2 h-2 rounded-full bg-blue-500 me-1.5 animate-pulse"></span> Sistema Ativo (Horário Sinop - MT)
             </span>
             <h2 class="text-2xl font-bold text-slate-900">Registro de Frequência</h2>
-            <p class="text-sm text-slate-500">Selecione seu setor atual e clique no botão do evento desejado.</p>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-700 mb-1">Setor / Área de Atuação</label>
-            <select id="residentSector" class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="Anestesiologia Veterinária">Anestesiologia Veterinária</option>
-              <option value="Clínica Cirúrgica de Animais de Companhia">Clínica Cirúrgica de Animais de Companhia</option>
-              <option value="Clínica Médica de Animais de Companhia">Clínica Médica de Animais de Companhia</option>
-              <option value="Clínica Médica e Cirúrgica de Grandes Animais">Clínica Médica e Cirúrgica de Grandes Animais</option>
-              <option value="Diagnóstico por Imagem em Medicina Veterinária">Diagnóstico por Imagem em Medicina Veterinária</option>
-              <option value="Medicina Veterinária Preventiva">Medicina Veterinária Preventiva</option>
-              <option value="Patologia Animal">Patologia Animal</option>
-              <option value="Patologia Clínica Veterinária">Patologia Clínica Veterinária</option>
-              <option value="Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos">Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos</option>
-            </select>
+            <p class="text-sm text-slate-500">Setor vinculado ao seu cadastro: <strong id="residentDisplaySector" class="text-slate-800 font-semibold"></strong></p>
           </div>
 
           <!-- BOTÕES DE REGISTRO DE PONTO -->
-          <div>
-            <label class="block text-xs font-medium text-slate-700 mb-2">Clique no evento para registrar:</label>
+          <div class="pt-2">
+            <label class="block text-xs font-medium text-slate-700 mb-2">Selecione o tipo de registro:</label>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <button type="button" onclick="openJustificationModal('Entrada')" id="btnEntrada" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50">
+              <button type="button" onclick="openJustificationModal('Entrada')" id="btnEntrada" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                 <i class="fa-solid fa-right-to-bracket mb-1 text-blue-600 block text-lg"></i>
                 Entrada
               </button>
-              <button type="button" onclick="openJustificationModal('Saída para Almoço')" id="btnSaidaAlmoco" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50">
+              <button type="button" onclick="openJustificationModal('Saída para Almoço')" id="btnSaidaAlmoco" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                 <i class="fa-solid fa-utensils mb-1 text-amber-600 block text-lg"></i>
                 Saída Almoço
               </button>
-              <button type="button" onclick="openJustificationModal('Retorno do Almoço')" id="btnVoltaAlmoco" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50">
+              <button type="button" onclick="openJustificationModal('Retorno do Almoço')" id="btnVoltaAlmoco" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                 <i class="fa-solid fa-arrow-rotate-left mb-1 text-emerald-600 block text-lg"></i>
                 Volta Almoço
               </button>
-              <button type="button" onclick="openJustificationModal('Saída')" id="btnSaida" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50">
+              <button type="button" onclick="openJustificationModal('Saída')" id="btnSaida" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                 <i class="fa-solid fa-right-from-bracket mb-1 text-red-600 block text-lg"></i>
                 Saída Turno
               </button>
@@ -166,13 +151,13 @@
     <!-- PAINEL DO COORDENADOR -->
     <section id="coordinatorDashboard" class="hidden space-y-6">
       <div class="flex flex-wrap gap-2 border-b border-slate-200">
-        <button id="tabBtnRelatorio" onclick="switchCoordTab('relatorio')" class="py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600">
+        <button id="tabBtnRelatorio" onclick="switchCoordTab('relatorio')" class="py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer">
           <i class="fa-solid fa-table-list me-1.5"></i> Relatório Geral de Pontos
         </button>
-        <button id="tabBtnResidentes" onclick="switchCoordTab('residentes')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800">
+        <button id="tabBtnResidentes" onclick="switchCoordTab('residentes')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer">
           <i class="fa-solid fa-user-plus me-1.5"></i> Cadastrar & Gerenciar Residentes
         </button>
-        <button id="tabBtnPerfil" onclick="switchCoordTab('perfil')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800">
+        <button id="tabBtnPerfil" onclick="switchCoordTab('perfil')" class="py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer">
           <i class="fa-solid fa-user-gear me-1.5"></i> Meu Perfil (E-mail e Senha)
         </button>
       </div>
@@ -214,7 +199,7 @@
       <div id="tabContentResidentes" class="hidden space-y-6">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <h3 class="text-lg font-bold text-slate-900 mb-2">Cadastrar Novo Residente</h3>
-          <p class="text-sm text-slate-500 mb-4">Adicione um novo médico veterinário à lista oficial da residência.</p>
+          <p class="text-sm text-slate-500 mb-4">Adicione um novo médico veterinário definindo seu nome, e-mail, senha e setor principal de atuação.</p>
           <form id="addResidentForm" onsubmit="handleAddResident(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <label class="block text-xs font-medium text-slate-700 mb-1">Nome Completo</label>
@@ -229,7 +214,7 @@
               <input type="password" id="newResidentPassword" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="••••••••">
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Setor Principal</label>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Setor Principal (Área de Atuação)</label>
               <select id="newResidentSector" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 <option value="Anestesiologia Veterinária">Anestesiologia Veterinária</option>
                 <option value="Clínica Cirúrgica de Animais de Companhia">Clínica Cirúrgica de Animais de Companhia</option>
@@ -243,7 +228,7 @@
               </select>
             </div>
             <div class="sm:col-span-2 md:col-span-4 flex justify-end">
-              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-sm">
+              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-sm cursor-pointer">
                 <i class="fa-solid fa-user-check me-1"></i> Cadastrar Residente
               </button>
             </div>
@@ -283,7 +268,7 @@
               <input type="password" id="coordPasswordInput" placeholder="Digite uma nova senha" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
               <span class="text-[11px] text-slate-400 mt-0.5 block">Deixe em branco caso não queira alterar a senha atual.</span>
             </div>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition shadow-sm w-full sm:w-auto">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition shadow-sm w-full sm:w-auto cursor-pointer">
               <i class="fa-solid fa-floppy-disk me-1"></i> Salvar Alterações
             </button>
           </form>
@@ -292,34 +277,35 @@
     </section>
   </main>
 
-  <!-- MODAL DE JUSTIFICATIVA (ABRE AO CLICAR NO BOTÃO DE PONTO) -->
-  <div id="justificationModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border border-slate-200 space-y-4">
+  <!-- MODAL DE JUSTIFICATIVA -->
+  <div id="justificationModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="font-bold text-slate-900 text-lg flex items-center">
-          <i class="fa-solid fa-pen-to-square text-blue-600 me-2"></i> Confirmar Registro
+          <i class="fa-solid fa-pen-to-square text-blue-600 me-2"></i> Adicionar Justificativa
         </h3>
-        <button onclick="closeJustificationModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+        <button type="button" onclick="closeJustificationModal()" class="text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <div class="space-y-2 text-sm">
-        <p><strong class="text-slate-700">Tipo de Evento:</strong> <span id="modalPunchType" class="text-blue-600 font-semibold"></span></p>
-        <p><strong class="text-slate-700">Horário Atual (Sinop-MT):</strong> <span id="modalPunchTime" class="text-slate-900 font-bold"></span></p>
+      <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5 text-sm">
+        <p class="text-slate-600"><strong class="text-slate-800">Tipo:</strong> <span id="modalPunchType" class="text-blue-600 font-semibold"></span></p>
+        <p class="text-slate-600"><strong class="text-slate-800">Setor:</strong> <span id="modalPunchSector" class="text-slate-800 font-medium"></span></p>
+        <p class="text-slate-600"><strong class="text-slate-800">Horário Local (Sinop-MT):</strong> <span id="modalPunchTime" class="text-slate-900 font-bold"></span></p>
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1">Justificativa (Opcional)</label>
-        <textarea id="punchJustification" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Atraso devido a atendimento de emergência..."></textarea>
+        <label class="block text-xs font-medium text-slate-700 mb-1">Deseja adicionar alguma justificativa? (Opcional)</label>
+        <textarea id="punchJustification" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" placeholder="Ex: Atraso devido a atendimento cirúrgico prolongado..."></textarea>
       </div>
 
       <div class="flex justify-end space-x-3 pt-2">
-        <button type="button" onclick="closeJustificationModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
+        <button type="button" onclick="closeJustificationModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer">
           Cancelar
         </button>
-        <button type="button" onclick="confirmPunchWithJustification()" class="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition shadow-sm">
-          Confirmar Ponto
+        <button type="button" onclick="confirmPunchWithJustification()" class="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition shadow-sm cursor-pointer">
+          Confirmar e Registrar Ponto
         </button>
       </div>
     </div>
@@ -357,8 +343,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v9')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v9')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v11')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v11')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -395,8 +381,10 @@
     function startClock() {
       const update = () => {
         const sinopTime = getSinopDateTime();
-        document.getElementById('liveClock').innerText = sinopTime.timeStr;
-        document.getElementById('liveDate').innerText = sinopTime.dateFullStr;
+        const clockEl = document.getElementById('liveClock');
+        const dateEl = document.getElementById('liveDate');
+        if (clockEl) clockEl.innerText = sinopTime.timeStr;
+        if (dateEl) dateEl.innerText = sinopTime.dateFullStr;
       };
       update();
       setInterval(update, 1000);
@@ -411,7 +399,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v9', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v11', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -420,7 +408,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v9');
+      const session = localStorage.getItem('hovet_session_v11');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -431,7 +419,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v9');
+      localStorage.removeItem('hovet_session_v11');
       showLogin();
     }
 
@@ -451,7 +439,8 @@
       if (currentUser.role === 'resident') {
         document.getElementById('residentDashboard').classList.remove('hidden');
         document.getElementById('coordinatorDashboard').classList.add('hidden');
-        document.getElementById('residentSector').value = currentUser.sector || OFFICIAL_SECTORS[0];
+        // Exibe o setor fixo cadastrado do residente
+        document.getElementById('residentDisplaySector').innerText = currentUser.sector || OFFICIAL_SECTORS[0];
         renderResidentHistory();
         highlightNextButton();
       } else {
@@ -475,7 +464,7 @@
       const btnSaida = document.getElementById('btnSaida');
 
       [btnEntrada, btnSaidaAlmoco, btnVoltaAlmoco, btnSaida].forEach(b => {
-        b.className = "p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50";
+        if (b) b.className = "p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer";
       });
 
       let recommended = btnEntrada;
@@ -487,30 +476,33 @@
         else if (last === 'Saída') recommended = btnEntrada;
       }
 
-      recommended.className = "p-3 rounded-xl border-2 border-blue-600 text-center font-semibold text-sm transition bg-blue-50 text-blue-900 shadow-sm ring-2 ring-blue-100";
+      if (recommended) {
+        recommended.className = "p-3 rounded-xl border-2 border-blue-600 text-center font-semibold text-sm transition bg-blue-50 text-blue-900 shadow-sm ring-2 ring-blue-100 cursor-pointer";
+      }
     }
 
-    // Abre o modal de justificativa ao clicar em qualquer botão de ponto
-    function openJustificationModal(type) {
+    // Abre a janela de justificativa utilizando o setor fixo do cadastro do residente
+    window.openJustificationModal = function(type) {
       selectedPunchType = type;
       const sinopNow = getSinopDateTime();
       
       document.getElementById('modalPunchType').innerText = type;
+      document.getElementById('modalPunchSector').innerText = currentUser.sector || OFFICIAL_SECTORS[0];
       document.getElementById('modalPunchTime').innerText = sinopNow.timeStr;
       document.getElementById('punchJustification').value = '';
       document.getElementById('justificationModal').classList.remove('hidden');
     }
 
-    function closeJustificationModal() {
+    window.closeJustificationModal = function() {
       document.getElementById('justificationModal').classList.add('hidden');
     }
 
-    // Confirma e salva o ponto com a justificativa opcional
-    function confirmPunchWithJustification() {
+    // Confirma e registra o ponto utilizando o setor fixo do cadastro
+    window.confirmPunchWithJustification = function() {
       const sinopNow = getSinopDateTime();
       const dateStr = sinopNow.dateIsoStr;
       const timeStr = sinopNow.timeStr.substring(0, 5);
-      const sector = document.getElementById('residentSector').value;
+      const sector = currentUser.sector || OFFICIAL_SECTORS[0];
       const justification = document.getElementById('punchJustification').value.trim();
 
       const newPunch = {
@@ -530,7 +522,7 @@
       highlightNextButton();
       closeJustificationModal();
 
-      alert(`Ponto registrado com sucesso!\nTipo: ${selectedPunchType} | Horário: ${timeStr}`);
+      alert(`Ponto registrado com sucesso (Horário de Sinop-MT)!\nTipo: ${selectedPunchType} | Horário: ${timeStr}`);
     }
 
     function renderResidentHistory() {
@@ -558,19 +550,19 @@
       document.getElementById('tabContentResidentes').classList.add('hidden');
       document.getElementById('tabContentPerfil').classList.add('hidden');
 
-      document.getElementById('tabBtnRelatorio').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
-      document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
-      document.getElementById('tabBtnPerfil').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800";
+      document.getElementById('tabBtnRelatorio').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer";
+      document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer";
+      document.getElementById('tabBtnPerfil').className = "py-2.5 px-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-800 cursor-pointer";
 
       if (tab === 'relatorio') {
         document.getElementById('tabContentRelatorio').classList.remove('hidden');
-        document.getElementById('tabBtnRelatorio').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600";
+        document.getElementById('tabBtnRelatorio').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer";
       } else if (tab === 'residentes') {
         document.getElementById('tabContentResidentes').classList.remove('hidden');
-        document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600";
+        document.getElementById('tabBtnResidentes').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer";
       } else if (tab === 'perfil') {
         document.getElementById('tabContentPerfil').classList.remove('hidden');
-        document.getElementById('tabBtnPerfil').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600";
+        document.getElementById('tabBtnPerfil').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer";
       }
     }
 
@@ -606,7 +598,7 @@
         }
         let timeDisplay = p.time;
         if (p.justification) {
-          timeDisplay += ` <span title="${p.justification}" class="text-blue-600 cursor-help">(*)</span>`;
+          timeDisplay += ` <span title="${p.justification}" class="text-blue-600 cursor-help font-bold" data-tooltip="${p.justification}">(*)</span>`;
         }
 
         if (p.type === 'Entrada') grouped[key].entrada = timeDisplay;
@@ -657,7 +649,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v9', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v11', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -707,7 +699,7 @@
           <td class="py-3 px-4 text-slate-600">${r.email}</td>
           <td class="py-3 px-4 text-slate-600">${r.sector}</td>
           <td class="py-3 px-4 text-right">
-            <button onclick="deleteResident('${r.id}', '${r.name}')" class="text-xs text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded-lg transition" title="Excluir Perfil">
+            <button onclick="deleteResident('${r.id}', '${r.name}')" class="text-xs text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded-lg transition cursor-pointer" title="Excluir Perfil">
               <i class="fa-solid fa-trash-can text-sm me-1"></i> Excluir
             </button>
           </td>
@@ -715,7 +707,7 @@
       `).join('');
     }
 
-    function deleteResident(id, name) {
+    window.deleteResident = function(id, name) {
       if (confirm(`Tem certeza que deseja excluir o residente "${name}"?\nOs registros de ponto associados também serão removidos.`)) {
         users = users.filter(u => u.id !== id);
         punches = punches.filter(p => p.userId !== id);
@@ -727,8 +719,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v9', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v9', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v11', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v11', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
