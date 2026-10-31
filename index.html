@@ -95,40 +95,46 @@
               <span class="w-2 h-2 rounded-full bg-blue-500 me-1.5 animate-pulse"></span> Sistema Ativo (Horário Sinop - MT)
             </span>
             <h2 class="text-2xl font-bold text-slate-900">Registro de Frequência</h2>
-            <p class="text-sm text-slate-500">Selecione o setor atual e registre a entrada/saída do turno.</p>
+            <p class="text-sm text-slate-500">Selecione seu setor atual e clique no botão correspondente ao seu registro.</p>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Setor / Área de Atuação</label>
-              <select id="residentSector" class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="Anestesiologia Veterinária">Anestesiologia Veterinária</option>
-                <option value="Clínica Cirúrgica de Animais de Companhia">Clínica Cirúrgica de Animais de Companhia</option>
-                <option value="Clínica Médica de Animais de Companhia">Clínica Médica de Animais de Companhia</option>
-                <option value="Clínica Médica e Cirúrgica de Grandes Animais">Clínica Médica e Cirúrgica de Grandes Animais</option>
-                <option value="Diagnóstico por Imagem em Medicina Veterinária">Diagnóstico por Imagem em Medicina Veterinária</option>
-                <option value="Medicina Veterinária Preventiva">Medicina Veterinária Preventiva</option>
-                <option value="Patologia Animal">Patologia Animal</option>
-                <option value="Patologia Clínica Veterinária">Patologia Clínica Veterinária</option>
-                <option value="Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos">Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Tipo de Evento</label>
-              <select id="punchType" class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="Entrada">Entrada (Início de Turno)</option>
-                <option value="Saída para Almoço">Saída para Almoço</option>
-                <option value="Retorno do Almoço">Retorno do Almoço</option>
-                <option value="Saída">Saída (Fim de Turno)</option>
-              </select>
-            </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Setor / Área de Atuação</label>
+            <select id="residentSector" class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="Anestesiologia Veterinária">Anestesiologia Veterinária</option>
+              <option value="Clínica Cirúrgica de Animais de Companhia">Clínica Cirúrgica de Animais de Companhia</option>
+              <option value="Clínica Médica de Animais de Companhia">Clínica Médica de Animais de Companhia</option>
+              <option value="Clínica Médica e Cirúrgica de Grandes Animais">Clínica Médica e Cirúrgica de Grandes Animais</option>
+              <option value="Diagnóstico por Imagem em Medicina Veterinária">Diagnóstico por Imagem em Medicina Veterinária</option>
+              <option value="Medicina Veterinária Preventiva">Medicina Veterinária Preventiva</option>
+              <option value="Patologia Animal">Patologia Animal</option>
+              <option value="Patologia Clínica Veterinária">Patologia Clínica Veterinária</option>
+              <option value="Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos">Reprodução Animal e Obstetrícia Veterinária nos Animais Domésticos</option>
+            </select>
           </div>
 
-          <button onclick="registerPunch()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition shadow-sm flex items-center justify-center space-x-2">
-            <i class="fa-solid fa-fingerprint"></i>
-            <span>Confirmar Registro de Ponto</span>
-          </button>
+          <!-- BOTÕES DE REGISTRO DE PONTO -->
+          <div>
+            <label class="block text-xs font-medium text-slate-700 mb-2">Selecione o Evento:</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <button type="button" onclick="registerPunch('Entrada')" id="btnEntrada" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50">
+                <i class="fa-solid fa-right-to-bracket mb-1 text-blue-600 block text-lg"></i>
+                Entrada
+              </button>
+              <button type="button" onclick="registerPunch('Saída para Almoço')" id="btnSaidaAlmoco" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50">
+                <i class="fa-solid fa-utensils mb-1 text-amber-600 block text-lg"></i>
+                Saída Almoço
+              </button>
+              <button type="button" onclick="registerPunch('Retorno do Almoço')" id="btnVoltaAlmoco" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50">
+                <i class="fa-solid fa-arrow-rotate-left mb-1 text-emerald-600 block text-lg"></i>
+                Volta Almoço
+              </button>
+              <button type="button" onclick="registerPunch('Saída')" id="btnSaida" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50">
+                <i class="fa-solid fa-right-from-bracket mb-1 text-red-600 block text-lg"></i>
+                Saída Turno
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center flex flex-col justify-center items-center">
@@ -319,18 +325,17 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v6')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v6')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v7')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v7')) || DEFAULT_PUNCHES;
 
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
       checkSession();
     });
 
-    // Função ajustada estritamente para o fuso de Sinop - MT (GMT-4 / America/Cuiaba)
+    // Fuso horário estrito de Sinop - MT (GMT-4 / America/Cuiaba)
     function getSinopDateTime() {
       const now = new Date();
-      
       const optionsTime = { timeZone: 'America/Cuiaba', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
       const optionsDate = { timeZone: 'America/Cuiaba', year: 'numeric', month: '2-digit', day: '2-digit' };
       const optionsFullDate = { timeZone: 'America/Cuiaba', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -373,7 +378,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v6', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v7', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -382,7 +387,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v6');
+      const session = localStorage.getItem('hovet_session_v7');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -393,7 +398,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v6');
+      localStorage.removeItem('hovet_session_v7');
       showLogin();
     }
 
@@ -415,7 +420,7 @@
         document.getElementById('coordinatorDashboard').classList.add('hidden');
         document.getElementById('residentSector').value = currentUser.sector || OFFICIAL_SECTORS[0];
         renderResidentHistory();
-        updateNextPunchType();
+        highlightNextButton();
       } else {
         document.getElementById('coordinatorDashboard').classList.remove('hidden');
         document.getElementById('residentDashboard').classList.add('hidden');
@@ -428,30 +433,39 @@
       }
     }
 
-    function updateNextPunchType() {
+    // Destaca visualmente o botão recomendado com base na última batida
+    function highlightNextButton() {
       const userPunches = punches.filter(p => p.userId === currentUser.id);
-      const punchSelect = document.getElementById('punchType');
       
-      if (userPunches.length === 0) {
-        punchSelect.value = 'Entrada';
-        return;
+      const btnEntrada = document.getElementById('btnEntrada');
+      const btnSaidaAlmoco = document.getElementById('btnSaidaAlmoco');
+      const btnVoltaAlmoco = document.getElementById('btnVoltaAlmoco');
+      const btnSaida = document.getElementById('btnSaida');
+
+      // Reseta todos para o estilo padrão
+      [btnEntrada, btnSaidaAlmoco, btnVoltaAlmoco, btnSaida].forEach(b => {
+        b.className = "p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50";
+      });
+
+      let recommended = btnEntrada;
+      if (userPunches.length > 0) {
+        const last = userPunches[0].type;
+        if (last === 'Entrada') recommended = btnSaidaAlmoco;
+        else if (last === 'Saída para Almoço') recommended = btnVoltaAlmoco;
+        else if (last === 'Retorno do Almoço') recommended = btnSaída;
+        else if (last === 'Saída') recommended = btnEntrada;
       }
-      
-      const lastPunch = userPunches[0].type; 
-      
-      if (lastPunch === 'Entrada') punchSelect.value = 'Saída para Almoço';
-      else if (lastPunch === 'Saída para Almoço') punchSelect.value = 'Retorno do Almoço';
-      else if (lastPunch === 'Retorno do Almoço') punchSelect.value = 'Saída';
-      else if (lastPunch === 'Saída') punchSelect.value = 'Entrada';
+
+      // Aplica destaque azul no botão recomendado
+      recommended.className = "p-3 rounded-xl border-2 border-blue-600 text-center font-semibold text-sm transition bg-blue-50 text-blue-900 shadow-sm ring-2 ring-blue-100";
     }
 
-    function registerPunch() {
+    function registerPunch(type) {
       const sinopNow = getSinopDateTime();
       const dateStr = sinopNow.dateIsoStr;
       const timeStr = sinopNow.timeStr.substring(0, 5);
 
       const sector = document.getElementById('residentSector').value;
-      const type = document.getElementById('punchType').value;
 
       const newPunch = {
         id: Date.now(),
@@ -466,8 +480,8 @@
       punches.unshift(newPunch);
       saveData();
       renderResidentHistory();
-      updateNextPunchType();
-      alert(`Ponto registrado com sucesso (Horário de Sinop-MT)!\nHorário: ${timeStr} | Tipo: ${type}`);
+      highlightNextButton();
+      alert(`Ponto registrado com sucesso (Horário de Sinop-MT)!\nTipo: ${type} | Horário: ${timeStr}`);
     }
 
     function renderResidentHistory() {
@@ -588,7 +602,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v6', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v7', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -658,8 +672,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v6', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v6', JSON.stringify(punches));
+      localStorage.setItem('hov_users_v7', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v7', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
