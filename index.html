@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ponto Eletrônico - Residentes HOVET / UFMT</title>
+  <title>Ponto Eletrônico - Residentes HOVET / UFMT - Sinop</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -27,7 +27,7 @@
           <i class="fa-solid fa-hospital flex-shrink-0"></i>
         </div>
         <div>
-          <h1 class="font-bold text-slate-900 text-base leading-tight">HOVET / UFMT</h1>
+          <h1 class="font-bold text-slate-900 text-base leading-tight">HOVET / UFMT - Sinop</h1>
           <p class="text-xs text-slate-500">Ponto Eletrônico da Residência Veterinária</p>
         </div>
       </div>
@@ -93,8 +93,8 @@
       <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
         <div class="md:col-span-2 space-y-4">
           <div>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 mb-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 me-1.5 animate-pulse"></span> Sistema Ativo
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 mb-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500 me-1.5 animate-pulse"></span> Sistema Ativo
             </span>
             <h2 class="text-2xl font-bold text-slate-900">Registro de Frequência</h2>
             <p class="text-sm text-slate-500">Selecione o setor atual e registre a entrada/saída do turno.</p>
@@ -127,7 +127,7 @@
             </div>
           </div>
 
-          <button onclick="registerPunch()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition shadow-sm flex items-center justify-center space-x-2">
+          <button onclick="registerPunch()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition shadow-sm flex items-center justify-center space-x-2">
             <i class="fa-solid fa-fingerprint"></i>
             <span>Confirmar Registro de Ponto</span>
           </button>
@@ -135,7 +135,7 @@
 
         <!-- RELÓGIO E STATUS -->
         <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center flex flex-col justify-center items-center">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Horário Oficial de Brasília</span>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Horário Local</span>
           <div id="liveClock" class="text-3xl font-extrabold text-slate-800 tracking-tight">00:00:00</div>
           <div id="liveDate" class="text-xs text-slate-500 mt-1 capitalize"></div>
         </div>
@@ -195,7 +195,7 @@
             </div>
           </div>
 
-          <!-- TABELA UNIFICADA SEM COLUNA DE AÇÃO -->
+          <!-- TABELA UNIFICADA -->
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
@@ -286,7 +286,7 @@
 
       </div>
 
-      <!-- ABA 3: PERFIL DO COORDENADOR (EDIÇÃO DE E-MAIL E SENHA) -->
+      <!-- ABA 3: PERFIL DO COORDENADOR -->
       <div id="tabContentPerfil" class="hidden space-y-6 max-w-xl">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <h3 class="text-lg font-bold text-slate-900 mb-2">Editar Meu Perfil (Coordenador)</h3>
@@ -317,7 +317,7 @@
 
   <!-- RODAPÉ -->
   <footer class="bg-white border-t border-slate-200 py-4 mt-auto text-center text-xs text-slate-400">
-    <p>Hospital Veterinário - Universidade Federal de Mato Grosso (HOVET/UFMT)</p>
+    <p>Hospital Veterinário - Universidade Federal de Mato Grosso, Campus Sinop (HOVET/UFMT - Sinop)</p>
     <p class="mt-1">Sistema Integrado de Ponto Eletrônico da Residência</p>
   </footer>
 
@@ -338,7 +338,7 @@
     const DEFAULT_USERS = [
       { id: '1', name: 'Dr. Lucas Mendes (Residente)', email: 'residente@ufmt.br', pass: '123456', role: 'resident', sector: 'Clínica Médica de Animais de Companhia' },
       { id: '2', name: 'Dra. Marina Santos (Residente)', email: 'marina@ufmt.br', pass: '123456', role: 'resident', sector: 'Anestesiologia Veterinária' },
-      { id: '99', name: 'Prof. Coordenador HOVET', email: 'coord@ufmt.br', pass: '123456', role: 'coordinator', sector: 'Geral' }
+      { id: '99', name: 'PRUMV', email: 'coord@ufmt.br', pass: '123456', role: 'coordinator', sector: 'Geral' }
     ];
 
     const DEFAULT_PUNCHES = [
@@ -411,13 +411,14 @@
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('userHeaderInfo').classList.remove('hidden');
       document.getElementById('userName').innerText = currentUser.name;
-      document.getElementById('userRole').innerText = currentUser.role === 'coordinator' ? 'Coordenador' : 'Residente';
+      document.getElementById('userRole').innerText = currentUser.role === 'coordinator' ? 'PRUMV' : 'Residente';
 
       if (currentUser.role === 'resident') {
         document.getElementById('residentDashboard').classList.remove('hidden');
         document.getElementById('coordinatorDashboard').classList.add('hidden');
         document.getElementById('residentSector').value = currentUser.sector || OFFICIAL_SECTORS[0];
         renderResidentHistory();
+        updateNextPunchType(); // Pre-seleciona a próxima batida de ponto
       } else {
         document.getElementById('coordinatorDashboard').classList.remove('hidden');
         document.getElementById('residentDashboard').classList.add('hidden');
@@ -427,6 +428,24 @@
         renderGeneralReport();
         renderResidentManagementList();
       }
+    }
+
+    // NOVA FUNÇÃO: Seleciona automaticamente o próximo tipo de evento lógico
+    function updateNextPunchType() {
+      const userPunches = punches.filter(p => p.userId === currentUser.id);
+      const punchSelect = document.getElementById('punchType');
+      
+      if (userPunches.length === 0) {
+        punchSelect.value = 'Entrada';
+        return;
+      }
+      
+      const lastPunch = userPunches[0].type; 
+      
+      if (lastPunch === 'Entrada') punchSelect.value = 'Saída para Almoço';
+      else if (lastPunch === 'Saída para Almoço') punchSelect.value = 'Retorno do Almoço';
+      else if (lastPunch === 'Retorno do Almoço') punchSelect.value = 'Saída';
+      else if (lastPunch === 'Saída') punchSelect.value = 'Entrada';
     }
 
     function registerPunch() {
@@ -450,6 +469,8 @@
       punches.unshift(newPunch);
       saveData();
       renderResidentHistory();
+      updateNextPunchType(); // Atualiza a seleção para o próximo evento
+      
       alert(`Ponto registrado com sucesso!\nHorário: ${timeStr} | Tipo: ${type}`);
     }
 
@@ -543,7 +564,7 @@
           <td class="py-3 px-4 font-medium text-slate-900">${r.userName}</td>
           <td class="py-3 px-4 text-slate-600">${formatDate(r.date)}</td>
           <td class="py-3 px-4 text-slate-600">${r.sector}</td>
-          <td class="py-3 px-4 text-center font-semibold text-emerald-600 bg-slate-50/50">${r.entrada}</td>
+          <td class="py-3 px-4 text-center font-semibold text-blue-600 bg-slate-50/50">${r.entrada}</td>
           <td class="py-3 px-4 text-center text-amber-600 bg-slate-50/50">${r.saidaAlmoco}</td>
           <td class="py-3 px-4 text-center text-blue-600 bg-slate-50/50">${r.voltaAlmoco}</td>
           <td class="py-3 px-4 text-center font-semibold text-slate-700 bg-slate-50/50">${r.saida}</td>
@@ -576,7 +597,7 @@
       saveData();
       localStorage.setItem('hovet_session', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
-      alert('Perfil do Coordenador (e-mail/senha) atualizado com sucesso!');
+      alert('Perfil da Coordenação (e-mail/senha) atualizado com sucesso!');
     }
 
     // CADASTRO E EXCLUSÃO DE RESIDENTES
