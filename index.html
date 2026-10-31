@@ -81,7 +81,7 @@
         <div class="bg-blue-50/70 p-3 rounded-lg border border-blue-100 text-xs text-slate-600 space-y-1 mt-4">
           <p class="font-semibold text-blue-900 mb-1"><i class="fa-solid fa-circle-info me-1"></i> Contas de Simulação:</p>
           <p>• <strong>Residente:</strong> residente@ufmt.br (Senha: 123456)</p>
-          <p>• <strong>Coordenador:</strong> coord@ufmt.br (Senha: 123456)</p>
+          <p>• <strong>PRUMV (Coordenação):</strong> coord@ufmt.br (Senha: 123456)</p>
         </div>
       </form>
     </section>
@@ -289,7 +289,7 @@
       <!-- ABA 3: PERFIL DO COORDENADOR -->
       <div id="tabContentPerfil" class="hidden space-y-6 max-w-xl">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-          <h3 class="text-lg font-bold text-slate-900 mb-2">Editar Meu Perfil (Coordenador)</h3>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Editar Meu Perfil (PRUMV)</h3>
           <p class="text-sm text-slate-500 mb-6">Altere seu e-mail ou sua senha de acesso ao sistema.</p>
 
           <form id="coordProfileForm" onsubmit="handleUpdateCoordProfile(event)" class="space-y-4">
@@ -317,7 +317,7 @@
 
   <!-- RODAPÉ -->
   <footer class="bg-white border-t border-slate-200 py-4 mt-auto text-center text-xs text-slate-400">
-    <p>Hospital Veterinário - Universidade Federal de Mato Grosso, Campus Sinop (HOVET/UFMT - Sinop)</p>
+    <p>Universidade Federal de Mato Grosso, Campus Sinop (HOVET/UFMT - Sinop)</p>
     <p class="mt-1">Sistema Integrado de Ponto Eletrônico da Residência</p>
   </footer>
 
@@ -337,7 +337,6 @@
 
     const DEFAULT_USERS = [
       { id: '1', name: 'Dr. Lucas Mendes (Residente)', email: 'residente@ufmt.br', pass: '123456', role: 'resident', sector: 'Clínica Médica de Animais de Companhia' },
-      { id: '2', name: 'Dra. Marina Santos (Residente)', email: 'marina@ufmt.br', pass: '123456', role: 'resident', sector: 'Anestesiologia Veterinária' },
       { id: '99', name: 'PRUMV', email: 'coord@ufmt.br', pass: '123456', role: 'coordinator', sector: 'Geral' }
     ];
 
@@ -398,6 +397,8 @@
       currentUser = null;
       localStorage.removeItem('hovet_session');
       showLogin();
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
     }
 
     function showLogin() {
@@ -418,7 +419,7 @@
         document.getElementById('coordinatorDashboard').classList.add('hidden');
         document.getElementById('residentSector').value = currentUser.sector || OFFICIAL_SECTORS[0];
         renderResidentHistory();
-        updateNextPunchType(); // Pre-seleciona a próxima batida de ponto
+        updateNextPunchType();
       } else {
         document.getElementById('coordinatorDashboard').classList.remove('hidden');
         document.getElementById('residentDashboard').classList.add('hidden');
@@ -427,10 +428,13 @@
         populateResidentFilter();
         renderGeneralReport();
         renderResidentManagementList();
+        
+        // This instantly triggers the switch to "Relatório" tab on load to prevent blank screen
+        switchCoordTab('relatorio');
       }
     }
 
-    // NOVA FUNÇÃO: Seleciona automaticamente o próximo tipo de evento lógico
+    // Seleciona automaticamente o próximo tipo de evento lógico
     function updateNextPunchType() {
       const userPunches = punches.filter(p => p.userId === currentUser.id);
       const punchSelect = document.getElementById('punchType');
@@ -469,9 +473,7 @@
       punches.unshift(newPunch);
       saveData();
       renderResidentHistory();
-      updateNextPunchType(); // Atualiza a seleção para o próximo evento
-      
-      alert(`Ponto registrado com sucesso!\nHorário: ${timeStr} | Tipo: ${type}`);
+      updateNextPunchType();
     }
 
     function renderResidentHistory() {
@@ -597,7 +599,6 @@
       saveData();
       localStorage.setItem('hovet_session', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
-      alert('Perfil da Coordenação (e-mail/senha) atualizado com sucesso!');
     }
 
     // CADASTRO E EXCLUSÃO DE RESIDENTES
@@ -609,7 +610,6 @@
       const sector = document.getElementById('newResidentSector').value;
 
       if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-        alert('Este e-mail já está cadastrado no sistema.');
         return;
       }
 
@@ -628,7 +628,6 @@
       renderResidentManagementList();
 
       document.getElementById('addResidentForm').reset();
-      alert(`Residente ${name} cadastrado com sucesso!`);
     }
 
     function renderResidentManagementList() {
