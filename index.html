@@ -21,7 +21,7 @@
 
   <!-- CABEÇALHO -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <div class="bg-blue-600 text-white p-2 rounded-lg font-bold">
           <i class="fa-solid fa-hospital flex-shrink-0"></i>
@@ -44,7 +44,7 @@
   </header>
 
   <!-- CONTEÚDO PRINCIPAL -->
-  <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
 
     <!-- TELA DE LOGIN -->
     <section id="loginScreen" class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mt-6">
@@ -174,8 +174,8 @@
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div>
-              <h2 class="text-xl font-bold text-slate-900">Relatório Geral de Frequência</h2>
-              <p class="text-sm text-slate-500">Histórico completo e detalhado com filtro por período e residente.</p>
+              <h2 class="text-xl font-bold text-slate-900">Relatório Consolidado Diário</h2>
+              <p class="text-sm text-slate-500">Visualização unificada por dia com horários, plantões e justificativas integradas.</p>
             </div>
             
             <!-- FILTROS DO RELATÓRIO -->
@@ -194,27 +194,33 @@
                 <label class="block text-[11px] font-medium text-slate-500 mb-0.5">Data Fim</label>
                 <input type="date" id="filterDateEnd" onchange="renderGeneralReport()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
               </div>
-              <div class="flex items-end">
-                <button type="button" onclick="resetFilters()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer" title="Limpar Filtros de Data">
-                  <i class="fa-solid fa-rotate-left me-1"></i> Limpar Datas
+              <div class="flex items-end space-x-1">
+                <button type="button" onclick="setTodayFilter()" class="px-2.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-semibold transition cursor-pointer" title="Filtrar Hoje">
+                  Hoje
+                </button>
+                <button type="button" onclick="resetFilters()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer" title="Limpar Filtros de Data">
+                  <i class="fa-solid fa-rotate-left"></i>
                 </button>
               </div>
             </div>
           </div>
 
           <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="border-b border-slate-200 text-slate-500 text-xs uppercase font-semibold">
-                  <th class="py-3 px-4">Residente</th>
-                  <th class="py-3 px-4">Data</th>
-                  <th class="py-3 px-4">Hora</th>
-                  <th class="py-3 px-4">Tipo de Registro</th>
-                  <th class="py-3 px-4">Setor</th>
-                  <th class="py-3 px-4">Justificativa Informada</th>
+                <tr class="border-b border-slate-200 text-slate-500 uppercase font-semibold">
+                  <th class="py-3 px-3">Residente</th>
+                  <th class="py-3 px-3">Data</th>
+                  <th class="py-3 px-3">Setor</th>
+                  <th class="py-3 px-3 text-center bg-slate-50">Entrada</th>
+                  <th class="py-3 px-3 text-center bg-slate-50">Saída Almoço</th>
+                  <th class="py-3 px-3 text-center bg-slate-50">Volta Almoço</th>
+                  <th class="py-3 px-3 text-center bg-slate-50">Saída</th>
+                  <th class="py-3 px-3 text-center bg-blue-50/50">Entrada Plantão</th>
+                  <th class="py-3 px-3 text-center bg-amber-50/50">Saída Plantão</th>
                 </tr>
               </thead>
-              <tbody id="generalReportBody" class="divide-y divide-slate-100 text-sm"></tbody>
+              <tbody id="generalReportBody" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
         </div>
@@ -366,13 +372,13 @@
     ];
 
     const DEFAULT_PUNCHES = [
-      { id: 101, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '07:30', type: 'Entrada', sector: 'Clínica Médica de Animais de Companhia', justification: 'Trânsito intenso na BR-163' },
+      { id: 101, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '07:30', type: 'Entrada', sector: 'Clínica Médica de Animais de Companhia', justification: 'Trânsito na BR-163' },
       { id: 102, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '11:45', type: 'Saída para Almoço', sector: 'Clínica Médica de Animais de Companhia', justification: '' }
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v20')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v20')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v21')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v21')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -427,7 +433,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v20', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v21', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -436,7 +442,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v20');
+      const session = localStorage.getItem('hovet_session_v21');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -447,7 +453,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v20');
+      localStorage.removeItem('hovet_session_v21');
       showLogin();
     }
 
@@ -474,8 +480,7 @@
         document.getElementById('coordEmailInput').value = currentUser.email;
         document.getElementById('coordPasswordInput').value = '';
         populateResidentFilter();
-        
-        // Inicializa os filtros de data com a data atual de Sinop
+
         const todayIso = getSinopDateTime().dateIsoStr;
         if (!document.getElementById('filterDateStart').value) {
           document.getElementById('filterDateStart').value = todayIso;
@@ -578,6 +583,13 @@
         residents.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
     }
 
+    function setTodayFilter() {
+      const todayIso = getSinopDateTime().dateIsoStr;
+      document.getElementById('filterDateStart').value = todayIso;
+      document.getElementById('filterDateEnd').value = todayIso;
+      renderGeneralReport();
+    }
+
     function resetFilters() {
       document.getElementById('filterResidentRelatorio').value = 'ALL';
       document.getElementById('filterDateStart').value = '';
@@ -593,34 +605,70 @@
 
       let filteredPunches = punches;
 
-      // Filtro por residente
       if (filterId !== 'ALL') {
         filteredPunches = filteredPunches.filter(p => p.userId === filterId);
       }
-
-      // Filtro por data início
       if (dateStart) {
         filteredPunches = filteredPunches.filter(p => p.date >= dateStart);
       }
-
-      // Filtro por data fim
       if (dateEnd) {
         filteredPunches = filteredPunches.filter(p => p.date <= dateEnd);
       }
 
-      if (filteredPunches.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Nenhum registro encontrado para o filtro selecionado.</td></tr>`;
+      // Agrupa os registros por Residente + Data para exibir na mesma linha
+      const grouped = {};
+      filteredPunches.forEach(p => {
+        const key = `${p.userId}_${p.date}`;
+        if (!grouped[key]) {
+          grouped[key] = {
+            userName: p.userName,
+            date: p.date,
+            sector: p.sector,
+            entrada: { time: '--:--', just: '' },
+            saidaAlmoco: { time: '--:--', just: '' },
+            voltaAlmoco: { time: '--:--', just: '' },
+            saida: { time: '--:--', just: '' },
+            entradaPlantao: { time: '--:--', just: '' },
+            saidaPlantao: { time: '--:--', just: '' }
+          };
+        }
+
+        const slot = { time: p.time, just: p.justification || '' };
+        if (p.type === 'Entrada') grouped[key].entrada = slot;
+        else if (p.type === 'Saída para Almoço') grouped[key].saidaAlmoco = slot;
+        else if (p.type === 'Retorno do Almoço') grouped[key].voltaAlmoco = slot;
+        else if (p.type === 'Saída') grouped[key].saida = slot;
+        else if (p.type === 'Entrada Plantão') grouped[key].entradaPlantao = slot;
+        else if (p.type === 'Saída Plantão') grouped[key].saidaPlantao = slot;
+      });
+
+      const reportArray = Object.values(grouped);
+
+      if (reportArray.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="py-6 text-center text-slate-400">Nenhum registro encontrado para o filtro selecionado.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = filteredPunches.map(p => `
+      const formatCell = (cellData) => {
+        if (cellData.time === '--:--') return '<span class="text-slate-300">--:--</span>';
+        let html = `<span class="font-semibold text-slate-800">${cellData.time}</span>`;
+        if (cellData.just) {
+          html += `<span class="block text-[11px] text-amber-800 bg-amber-50 p-1 rounded mt-1 border border-amber-200 italic" title="${cellData.just}">${cellData.just}</span>`;
+        }
+        return html;
+      };
+
+      tbody.innerHTML = reportArray.map(r => `
         <tr class="hover:bg-slate-50 transition">
-          <td class="py-3 px-4 font-medium text-slate-900">${p.userName}</td>
-          <td class="py-3 px-4 text-slate-600">${formatDate(p.date)}</td>
-          <td class="py-3 px-4 font-semibold text-blue-600">${p.time}</td>
-          <td class="py-3 px-4 text-slate-800 font-medium">${p.type}</td>
-          <td class="py-3 px-4 text-slate-600">${p.sector}</td>
-          <td class="py-3 px-4 text-slate-600 text-xs">${p.justification ? `<span class="italic bg-amber-50 text-amber-900 px-2 py-1 rounded border border-amber-200 block">${p.justification}</span>` : '<span class="text-slate-400 italic">Nenhuma justificativa</span>'}</td>
+          <td class="py-3 px-3 font-medium text-slate-900">${r.userName}</td>
+          <td class="py-3 px-3 text-slate-600">${formatDate(r.date)}</td>
+          <td class="py-3 px-3 text-slate-600">${r.sector}</td>
+          <td class="py-3 px-3 text-center bg-slate-50/50">${formatCell(r.entrada)}</td>
+          <td class="py-3 px-3 text-center bg-slate-50/50">${formatCell(r.saidaAlmoco)}</td>
+          <td class="py-3 px-3 text-center bg-slate-50/50">${formatCell(r.voltaAlmoco)}</td>
+          <td class="py-3 px-3 text-center bg-slate-50/50">${formatCell(r.saida)}</td>
+          <td class="py-3 px-3 text-center bg-blue-50/30">${formatCell(r.entradaPlantao)}</td>
+          <td class="py-3 px-3 text-center bg-amber-50/30">${formatCell(r.saidaPlantao)}</td>
         </tr>
       `).join('');
     }
@@ -647,7 +695,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v20', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v21', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -770,8 +818,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v20', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v20', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v21', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v21', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
