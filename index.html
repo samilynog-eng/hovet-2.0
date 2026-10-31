@@ -350,8 +350,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v14')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v14')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v15')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v15')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -406,7 +406,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v14', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v15', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -415,7 +415,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v14');
+      const session = localStorage.getItem('hovet_session_v15');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -426,7 +426,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v14');
+      localStorage.removeItem('hovet_session_v15');
       showLogin();
     }
 
@@ -628,7 +628,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v14', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v15', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -698,8 +698,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v14', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v14', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v15', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v15', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
