@@ -175,7 +175,7 @@
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div>
               <h2 class="text-xl font-bold text-slate-900">Relatório Geral Consolidado</h2>
-              <p class="text-sm text-slate-500">Visualização unificada de entradas, saídas e plantões com justificativas.</p>
+              <p class="text-sm text-slate-500">Visualização unificada de entradas, saídas, plantões e respectivas justificativas.</p>
             </div>
             <div class="flex items-center space-x-3">
               <select id="filterResidentRelatorio" onchange="renderGeneralReport()" class="bg-slate-50 border border-slate-300 rounded-lg text-sm p-2">
@@ -195,6 +195,7 @@
                   <th class="py-3 px-4 text-center bg-slate-50/50">Volta Almoço</th>
                   <th class="py-3 px-4 text-center bg-slate-50/50">Saída</th>
                   <th class="py-3 px-4 text-center bg-blue-50/50">Plantão</th>
+                  <th class="py-3 px-4">Justificativas Detalhadas</th>
                 </tr>
               </thead>
               <tbody id="generalReportBody" class="divide-y divide-slate-100 text-sm"></tbody>
@@ -345,13 +346,13 @@
     ];
 
     const DEFAULT_PUNCHES = [
-      { id: 101, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '07:30', type: 'Entrada', sector: 'Clínica Médica de Animais de Companhia', justification: '' },
+      { id: 101, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '07:30', type: 'Entrada', sector: 'Clínica Médica de Animais de Companhia', justification: 'Trânsito na BR-163' },
       { id: 102, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '11:45', type: 'Saída para Almoço', sector: 'Clínica Médica de Animais de Companhia', justification: '' }
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v15')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v15')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v17')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v17')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -406,7 +407,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v15', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v17', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -415,7 +416,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v15');
+      const session = localStorage.getItem('hovet_session_v17');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -426,7 +427,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v15');
+      localStorage.removeItem('hovet_session_v17');
       showLogin();
     }
 
@@ -568,27 +569,28 @@
             saidaAlmoco: '--:--',
             voltaAlmoco: '--:--',
             saida: '--:--',
-            plantao: '--:--'
+            plantao: '--:--',
+            justificativasList: []
           };
         }
-        let timeDisplay = p.time;
-        if (p.justification) {
-          timeDisplay += ` <span title="${p.justification}" class="text-blue-600 cursor-help font-bold" data-tooltip="${p.justification}">(*)</span>`;
+
+        if (p.type === 'Entrada') grouped[key].entrada = p.time;
+        if (p.type === 'Saída para Almoço') grouped[key].saidaAlmoco = p.time;
+        if (p.type === 'Retorno do Almoço') grouped[key].voltaAlmoco = p.time;
+        if (p.type === 'Saída') grouped[key].saida = p.time;
+        if (p.type === 'Entrada Plantão' || p.type === 'Saída Plantão') {
+          grouped[key].plantao = `${p.type.replace(' Plantão', '')}: ${p.time}`;
         }
 
-        if (p.type === 'Entrada') grouped[key].entrada = timeDisplay;
-        if (p.type === 'Saída para Almoço') grouped[key].saidaAlmoco = timeDisplay;
-        if (p.type === 'Retorno do Almoço') grouped[key].voltaAlmoco = timeDisplay;
-        if (p.type === 'Saída') grouped[key].saida = timeDisplay;
-        if (p.type === 'Entrada Plantão' || p.type === 'Saída Plantão') {
-          grouped[key].plantao = `${p.type.replace(' Plantão', '')}: ${timeDisplay}`;
+        if (p.justification && p.justification.trim() !== '') {
+          grouped[key].justificativasList.push(`<strong>[${p.type} às ${p.time}]</strong>: ${p.justification}`);
         }
       });
 
       const reportArray = Object.values(grouped);
 
       if (reportArray.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="py-4 text-center text-slate-400">Nenhum registro para exibir.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="py-4 text-center text-slate-400">Nenhum registro para exibir.</td></tr>`;
         return;
       }
 
@@ -602,6 +604,9 @@
           <td class="py-3 px-4 text-center text-blue-600 bg-slate-50/50">${r.voltaAlmoco}</td>
           <td class="py-3 px-4 text-center font-semibold text-slate-700 bg-slate-50/50">${r.saida}</td>
           <td class="py-3 px-4 text-center font-medium text-blue-800 bg-blue-50/50">${r.plantao}</td>
+          <td class="py-3 px-4 text-slate-600 text-xs space-y-1">
+            ${r.justificativasList.length > 0 ? r.justificativasList.join('<br>') : '<span class="text-slate-400 italic">Nenhuma justificativa</span>'}
+          </td>
         </tr>
       `).join('');
     }
@@ -628,7 +633,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v15', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v17', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -698,8 +703,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v15', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v15', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v17', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v17', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
