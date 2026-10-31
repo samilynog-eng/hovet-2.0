@@ -92,7 +92,7 @@
         <div class="md:col-span-2 space-y-4">
           <div>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 mb-2">
-              <span class="w-2 h-2 rounded-full bg-blue-500 me-1.5 animate-pulse"></span> Sistema Ativo
+              <span class="w-2 h-2 rounded-full bg-blue-500 me-1.5 animate-pulse"></span> Sistema Ativo (Horário Sinop - MT)
             </span>
             <h2 class="text-2xl font-bold text-slate-900">Registro de Frequência</h2>
             <p class="text-sm text-slate-500">Selecione o setor atual e registre a entrada/saída do turno.</p>
@@ -132,7 +132,7 @@
         </div>
 
         <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center flex flex-col justify-center items-center">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Horário Local</span>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Horário de Sinop - MT</span>
           <div id="liveClock" class="text-3xl font-extrabold text-slate-800 tracking-tight">00:00:00</div>
           <div id="liveDate" class="text-xs text-slate-500 mt-1 capitalize"></div>
         </div>
@@ -319,20 +319,42 @@
     ];
 
     let currentUser = null;
-    // Chaves atualizadas para forçar a limpeza do cache antigo do navegador
-    let users = JSON.parse(localStorage.getItem('hovet_users_v3')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v3')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v4')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v4')) || DEFAULT_PUNCHES;
 
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
       checkSession();
     });
 
+    // Função para obter data/hora estritamente no fuso de Sinop - MT (America/Cuiaba)
+    function getSinopDateTime() {
+      const now = new Date();
+      
+      // Formata a data e hora baseada no fuso de Cuiabá/Sinop (GMT-4)
+      const optionsTime = { timeZone: 'America/Cuiaba', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+      const optionsDate = { timeZone: 'America/Cuiaba', year: 'numeric', month: '2-digit', day: '2-digit' };
+      const optionsFullDate = { timeZone: 'America/Cuiaba', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+      const timeStr = new Intl.DateTimeFormat('pt-BR', optionsTime).format(now);
+      
+      // Para o formato ISO YYYY-MM-DD em Sinop
+      const parts = new Intl.DateTimeFormat('pt-BR', optionsDate).formatToParts(now);
+      const day = parts.find(p => p.type === 'day').value;
+      const month = parts.find(p => p.type === 'month').value;
+      const year = parts.find(p => p.type === 'year').value;
+      const dateIsoStr = `${year}-${month}-${day}`;
+
+      const dateFullStr = new Intl.DateTimeFormat('pt-BR', optionsFullDate).format(now);
+
+      return { timeStr, dateIsoStr, dateFullStr };
+    }
+
     function startClock() {
       const update = () => {
-        const now = new Date();
-        document.getElementById('liveClock').innerText = now.toLocaleTimeString('pt-BR');
-        document.getElementById('liveDate').innerText = now.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const sinopTime = getSinopDateTime();
+        document.getElementById('liveClock').innerText = sinopTime.timeStr;
+        document.getElementById('liveDate').innerText = sinopTime.dateFullStr;
       };
       update();
       setInterval(update, 1000);
@@ -347,7 +369,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v3', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v4', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -356,7 +378,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v3');
+      const session = localStorage.getItem('hovet_session_v4');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -367,7 +389,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v3');
+      localStorage.removeItem('hovet_session_v4');
       showLogin();
     }
 
@@ -382,7 +404,7 @@
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('userHeaderInfo').classList.remove('hidden');
       document.getElementById('userName').innerText = currentUser.name;
-      // Ajustado rigorosamente: se for coordenador, exibe "COORDENAÇÃO" em azul
+      // Exibe "PRUMV" no nome e "COORDENAÇÃO" em azul conforme solicitado
       document.getElementById('userRole').innerText = currentUser.role === 'coordinator' ? 'COORDENAÇÃO' : 'Residente';
 
       if (currentUser.role === 'resident') {
@@ -421,9 +443,9 @@
     }
 
     function registerPunch() {
-      const now = new Date();
-      const dateStr = now.toISOString().split('T')[0];
-      const timeStr = now.toTimeString().split(' ')[0].substring(0, 5);
+      const sinopNow = getSinopDateTime();
+      const dateStr = sinopNow.dateIsoStr;
+      const timeStr = sinopNow.timeStr.substring(0, 5); // HH:MM
 
       const sector = document.getElementById('residentSector').value;
       const type = document.getElementById('punchType').value;
@@ -442,7 +464,7 @@
       saveData();
       renderResidentHistory();
       updateNextPunchType();
-      alert(`Ponto registrado com sucesso!\nHorário: ${timeStr} | Tipo: ${type}`);
+      alert(`Ponto registrado com sucesso (Horário de Sinop-MT)!\nHorário: ${timeStr} | Tipo: ${type}`);
     }
 
     function renderResidentHistory() {
@@ -563,7 +585,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v3', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v4', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -633,8 +655,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v3', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v3', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v4', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v4', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
