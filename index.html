@@ -105,36 +105,36 @@
           <div class="md:col-span-2 space-y-4">
             <div>
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 mb-2">
-                <span class="w-2 h-2 rounded-full bg-blue-500 me-1.5 animate-pulse"></span> Sistema Ativo (Horário Sinop - MT)
+                <span class="w-2 h-2 rounded-full bg-blue-500 me-1.5 animate-pulse"></span> Sistema Ativo (Horário Sinop - MT com GPS)
               </span>
               <h2 class="text-2xl font-bold text-slate-900">Registro de Frequência</h2>
-              <p class="text-sm text-slate-500">Selecione o tipo de evento abaixo para registrar sua frequência no turno ou plantão.</p>
+              <p class="text-sm text-slate-500">Selecione o tipo de evento abaixo para registrar sua frequência no turno ou plantão com geolocalização.</p>
             </div>
 
             <!-- BOTÕES DE REGISTRO DE PONTO -->
             <div class="pt-2">
               <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <button type="button" onclick="openJustificationModal('Entrada')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+                <button type="button" onclick="preparePunch('Entrada')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                   <i class="fa-solid fa-right-to-bracket mb-1 text-blue-600 block text-lg"></i>
                   Entrada
                 </button>
-                <button type="button" onclick="openJustificationModal('Saída para Almoço')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+                <button type="button" onclick="preparePunch('Saída para Almoço')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                   <i class="fa-solid fa-utensils mb-1 text-amber-600 block text-lg"></i>
                   Saída Almoço
                 </button>
-                <button type="button" onclick="openJustificationModal('Retorno do Almoço')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+                <button type="button" onclick="preparePunch('Retorno do Almoço')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                   <i class="fa-solid fa-arrow-rotate-left mb-1 text-emerald-600 block text-lg"></i>
                   Volta Almoço
                 </button>
-                <button type="button" onclick="openJustificationModal('Saída')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+                <button type="button" onclick="preparePunch('Saída')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
                   <i class="fa-solid fa-right-from-bracket mb-1 text-red-600 block text-lg"></i>
                   Saída
                 </button>
-                <button type="button" onclick="openJustificationModal('Entrada Plantão')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-blue-50/60 text-blue-900 hover:border-blue-500 hover:bg-blue-100 cursor-pointer">
+                <button type="button" onclick="preparePunch('Entrada Plantão')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-blue-50/60 text-blue-900 hover:border-blue-500 hover:bg-blue-100 cursor-pointer">
                   <i class="fa-solid fa-business-time mb-1 text-blue-600 block text-lg"></i>
                   Entrada Plantão
                 </button>
-                <button type="button" onclick="openJustificationModal('Saída Plantão')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-amber-50/60 text-amber-900 hover:border-amber-500 hover:bg-amber-100 cursor-pointer">
+                <button type="button" onclick="preparePunch('Saída Plantão')" class="p-3 rounded-xl border border-slate-200 text-center font-medium text-sm transition bg-amber-50/60 text-amber-900 hover:border-amber-500 hover:bg-amber-100 cursor-pointer">
                   <i class="fa-solid fa-hourglass-end mb-1 text-amber-600 block text-lg"></i>
                   Saída Plantão
                 </button>
@@ -159,6 +159,7 @@
                   <th class="py-3 px-4">Hora</th>
                   <th class="py-3 px-4">Tipo</th>
                   <th class="py-3 px-4">Setor</th>
+                  <th class="py-3 px-4">GPS / Geolocalização</th>
                   <th class="py-3 px-4">Justificativa</th>
                 </tr>
               </thead>
@@ -174,7 +175,7 @@
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h2 class="text-xl font-bold text-slate-900">Meu Relatório Consolidado</h2>
-              <p class="text-sm text-slate-500">Visualização unificada dos seus pontos por dia.</p>
+              <p class="text-sm text-slate-500">Visualização unificada dos seus pontos por dia com geolocalização.</p>
             </div>
             <button onclick="exportResidentPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition shadow-sm flex items-center justify-center space-x-2 cursor-pointer">
               <i class="fa-solid fa-file-pdf"></i>
@@ -279,7 +280,7 @@
           <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h2 class="text-xl font-bold text-slate-900">Relatório Consolidado Diário (Geral)</h2>
-              <p class="text-sm text-slate-500">Visualização unificada de todos os residentes filtrados.</p>
+              <p class="text-sm text-slate-500">Visualização unificada de todos os residentes com GPS e filtros.</p>
             </div>
             
             <!-- FILTROS DO RELATÓRIO -->
@@ -420,12 +421,12 @@
     </section>
   </main>
 
-  <!-- MODAL DE JUSTIFICATIVA -->
+  <!-- MODAL DE JUSTIFICATIVA E GPS -->
   <div id="justificationModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="font-bold text-slate-900 text-lg flex items-center">
-          <i class="fa-solid fa-pen-to-square text-blue-600 me-2"></i> Adicionar Justificativa
+          <i class="fa-solid fa-location-dot text-blue-600 me-2"></i> Registrar Ponto e Geolocalização
         </h3>
         <button type="button" onclick="closeJustificationModal()" class="text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
           <i class="fa-solid fa-xmark"></i>
@@ -435,6 +436,7 @@
       <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5 text-sm">
         <p class="text-slate-600"><strong class="text-slate-800">Tipo:</strong> <span id="modalPunchType" class="text-blue-600 font-semibold"></span></p>
         <p class="text-slate-600"><strong class="text-slate-800">Horário Local (Sinop-MT):</strong> <span id="modalPunchTime" class="text-slate-900 font-bold"></span></p>
+        <p class="text-slate-600"><strong class="text-slate-800">GPS Status:</strong> <span id="modalGpsStatus" class="text-emerald-600 font-medium">Obtendo coordenadas...</span></p>
       </div>
 
       <div>
@@ -446,8 +448,8 @@
         <button type="button" onclick="closeJustificationModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer">
           Cancelar
         </button>
-        <button type="button" onclick="confirmPunchWithJustification()" class="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition shadow-sm cursor-pointer">
-          Confirmar e Registrar Ponto
+        <button type="button" id="confirmPunchBtn" onclick="confirmPunchWithJustification()" disabled class="px-5 py-2 rounded-lg bg-blue-600 opacity-60 text-white text-sm font-medium transition shadow-sm cursor-not-allowed">
+          Aguardando GPS...
         </button>
       </div>
     </div>
@@ -480,14 +482,15 @@
     ];
 
     const DEFAULT_PUNCHES = [
-      { id: 101, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '07:30', type: 'Entrada', sector: 'Clínica Médica de Animais de Companhia', justification: 'Trânsito na BR-163' },
-      { id: 102, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '11:45', type: 'Saída para Almoço', sector: 'Clínica Médica de Animais de Companhia', justification: '' }
+      { id: 101, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '07:30', type: 'Entrada', sector: 'Clínica Médica de Animais de Companhia', gps: 'Lat: -11.8642, Lon: -55.5512 (±10m)', justification: 'Trânsito na BR-163' },
+      { id: 102, userId: '1', userName: 'Dr. Lucas Mendes (Residente)', date: '2026-03-29', time: '11:45', type: 'Saída para Almoço', sector: 'Clínica Médica de Animais de Companhia', gps: 'Lat: -11.8643, Lon: -55.5515 (±12m)', justification: '' }
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v27')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v27')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v28')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v28')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
+    let currentGpsData = 'GPS Não Capturado';
 
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
@@ -541,7 +544,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v27', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v28', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -550,7 +553,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v27');
+      const session = localStorage.getItem('hovet_session_v28');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -561,7 +564,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v27');
+      localStorage.removeItem('hovet_session_v28');
       showLogin();
     }
 
@@ -606,14 +609,57 @@
       }
     }
 
-    window.openJustificationModal = function(type) {
+    window.preparePunch = function(type) {
       selectedPunchType = type;
       const sinopNow = getSinopDateTime();
       
       document.getElementById('modalPunchType').innerText = type;
       document.getElementById('modalPunchTime').innerText = sinopNow.timeStr;
       document.getElementById('punchJustification').value = '';
+      
+      const gpsStatusEl = document.getElementById('modalGpsStatus');
+      const confirmBtn = document.getElementById('confirmPunchBtn');
+      gpsStatusEl.innerText = "Buscando geolocalização do dispositivo...";
+      gpsStatusEl.className = "text-amber-600 font-medium";
+      confirmBtn.disabled = true;
+      confirmBtn.className = "px-5 py-2 rounded-lg bg-blue-600 opacity-60 text-white text-sm font-medium transition shadow-sm cursor-not-allowed";
+      confirmBtn.innerText = "Aguardando GPS...";
+
       document.getElementById('justificationModal').classList.remove('hidden');
+
+      // Captura de Geolocalização HTML5
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude.toFixed(4);
+            const lon = position.coords.longitude.toFixed(4);
+            const accuracy = Math.round(position.coords.accuracy);
+            currentGpsData = `Lat: ${lat}, Lon: ${lon} (±${accuracy}m)`;
+            
+            gpsStatusEl.innerText = `GPS OK: ${currentGpsData}`;
+            gpsStatusEl.className = "text-emerald-600 font-medium";
+            confirmBtn.disabled = false;
+            confirmBtn.className = "px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition shadow-sm cursor-pointer";
+            confirmBtn.innerText = "Confirmar e Registrar Ponto";
+          },
+          (error) => {
+            currentGpsData = "GPS Indisponível (Permissão negada ou erro)";
+            gpsStatusEl.innerText = currentGpsData;
+            gpsStatusEl.className = "text-red-600 font-medium";
+            confirmBtn.disabled = false;
+            confirmBtn.className = "px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition shadow-sm cursor-pointer";
+            confirmBtn.innerText = "Confirmar e Registrar Ponto";
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      } else {
+        currentGpsData = "Geolocalização não suportada";
+        gpsStatusEl.innerText = currentGpsData;
+        gpsStatusEl.className = "text-red-600 font-medium";
+        confirmBtn.disabled = false;
+        confirmBtn.className = "px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition shadow-sm cursor-pointer";
+        confirmBtn.innerText = "Confirmar e Registrar Ponto";
+      }
     }
 
     window.closeJustificationModal = function() {
@@ -635,6 +681,7 @@
         time: timeStr,
         type: selectedPunchType,
         sector: sector,
+        gps: currentGpsData,
         justification: justification
       };
 
@@ -644,7 +691,7 @@
       renderResidentConsolidatedReport();
       closeJustificationModal();
 
-      alert(`Ponto registrado com sucesso (Horário de Sinop-MT)!\nTipo: ${selectedPunchType} | Horário: ${timeStr}`);
+      alert(`Ponto registrado com sucesso (Horário de Sinop-MT)!\nTipo: ${selectedPunchType} | Horário: ${timeStr}\nGPS: ${currentGpsData}`);
     }
 
     function switchResidentTab(tab) {
@@ -693,7 +740,7 @@
       const userPunches = punches.filter(p => p.userId === currentUser.id);
 
       if (userPunches.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>`;
         return;
       }
 
@@ -703,6 +750,7 @@
           <td class="py-3 px-4 font-semibold text-blue-600">${p.time}</td>
           <td class="py-3 px-4">${p.type}</td>
           <td class="py-3 px-4 text-slate-600">${p.sector}</td>
+          <td class="py-3 px-4 text-slate-500 text-xs font-mono">${p.gps || 'Não registrado'}</td>
           <td class="py-3 px-4 text-slate-700 text-xs">${p.justification || 'Nenhuma'}</td>
         </tr>
       `).join('');
@@ -728,7 +776,7 @@
           };
         }
 
-        const slot = { time: p.time, just: p.justification || '' };
+        const slot = { time: p.time, gps: p.gps || '', just: p.justification || '' };
         if (p.type === 'Entrada') grouped[key].entrada.push(slot);
         else if (p.type === 'Saída para Almoço') grouped[key].saidaAlmoco.push(slot);
         else if (p.type === 'Retorno do Almoço') grouped[key].voltaAlmoco.push(slot);
@@ -747,7 +795,10 @@
       const formatMultiCell = (cellArray) => {
         if (!cellArray || cellArray.length === 0) return '<span class="text-slate-300">--:--</span>';
         return cellArray.map(item => {
-          let html = `<div class="mb-1 last:mb-0"><span class="font-semibold text-slate-800">${item.time}</span>`;
+          let html = `<div class="mb-1.5 last:mb-0"><span class="font-semibold text-slate-800">${item.time}</span>`;
+          if (item.gps) {
+            html += `<span class="block text-[10px] text-blue-600 font-mono" title="${item.gps}"><i class="fa-solid fa-location-dot me-0.5"></i> ${item.gps}</span>`;
+          }
           if (item.just) {
             html += `<span class="block text-[11px] text-slate-700 bg-amber-50 p-1 rounded mt-0.5 border border-amber-200" title="${item.just}">${item.just}</span>`;
           }
@@ -810,7 +861,6 @@
         const todayPunches = punches.filter(p => p.userId === res.id && p.date === todayIso);
         if (todayPunches.length === 0) return;
 
-        // Ordena por horário cronológico
         todayPunches.sort((a, b) => a.time.localeCompare(b.time));
         const lastPunch = todayPunches[todayPunches.length - 1];
 
@@ -881,7 +931,7 @@
           };
         }
 
-        const slot = { time: p.time, just: p.justification || '' };
+        const slot = { time: p.time, gps: p.gps || '', just: p.justification || '' };
         if (p.type === 'Entrada') grouped[key].entrada.push(slot);
         else if (p.type === 'Saída para Almoço') grouped[key].saidaAlmoco.push(slot);
         else if (p.type === 'Retorno do Almoço') grouped[key].voltaAlmoco.push(slot);
@@ -900,7 +950,10 @@
       const formatMultiCell = (cellArray) => {
         if (!cellArray || cellArray.length === 0) return '<span class="text-slate-300">--:--</span>';
         return cellArray.map(item => {
-          let html = `<div class="mb-1 last:mb-0"><span class="font-semibold text-slate-800">${item.time}</span>`;
+          let html = `<div class="mb-1.5 last:mb-0"><span class="font-semibold text-slate-800">${item.time}</span>`;
+          if (item.gps) {
+            html += `<span class="block text-[10px] text-blue-600 font-mono" title="${item.gps}"><i class="fa-solid fa-location-dot me-0.5"></i> ${item.gps}</span>`;
+          }
           if (item.just) {
             html += `<span class="block text-[11px] text-slate-700 bg-amber-50 p-1 rounded mt-0.5 border border-amber-200" title="${item.just}">${item.just}</span>`;
           }
@@ -946,7 +999,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v27', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v28', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -1072,8 +1125,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v27', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v27', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v28', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v28', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
@@ -1084,3 +1137,5 @@
   </script>
 </body>
 </html>
+
+Sim
