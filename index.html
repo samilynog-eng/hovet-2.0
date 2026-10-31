@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- html2pdf Library for PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -97,7 +99,7 @@
         </button>
       </div>
 
-      <!-- ABA 1 DO RESIDENTE: REGISTRO E HISTÓRICO -->
+      <!-- ABA 1 DO RESIDENTE -->
       <div id="tabContentResidentRegistro" class="space-y-6">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
           <div class="md:col-span-2 space-y-4">
@@ -166,15 +168,21 @@
         </div>
       </div>
 
-      <!-- ABA 2 DO RESIDENTE: RELATÓRIO CONSOLIDADO DIÁRIO -->
+      <!-- ABA 2 DO RESIDENTE -->
       <div id="tabContentResidentConsolidado" class="hidden space-y-6">
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-          <div class="mb-6">
-            <h2 class="text-xl font-bold text-slate-900">Meu Relatório Consolidado</h2>
-            <p class="text-sm text-slate-500">Visualização unificada dos seus pontos por dia, incluindo turnos e plantões.</p>
+        <div id="residentPrintArea" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900">Meu Relatório Consolidado</h2>
+              <p class="text-sm text-slate-500">Visualização unificada dos seus pontos por dia.</p>
+            </div>
+            <button onclick="exportResidentPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition shadow-sm flex items-center justify-center space-x-2 cursor-pointer">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>Exportar PDF</span>
+            </button>
           </div>
 
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto pt-2">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="border-b border-slate-200 text-slate-500 uppercase font-semibold">
@@ -211,11 +219,11 @@
 
       <!-- ABA 1 DO COORDENADOR -->
       <div id="tabContentRelatorio" class="space-y-6">
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+        <div id="coordinatorPrintArea" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h2 class="text-xl font-bold text-slate-900">Relatório Consolidado Diário (Geral)</h2>
-              <p class="text-sm text-slate-500">Visualização unificada de todos os residentes com filtro por período e residente.</p>
+              <p class="text-sm text-slate-500">Visualização unificada de todos os residentes filtrados.</p>
             </div>
             
             <!-- FILTROS DO RELATÓRIO -->
@@ -241,11 +249,15 @@
                 <button type="button" onclick="resetFilters()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer" title="Limpar Filtros de Data">
                   <i class="fa-solid fa-rotate-left"></i>
                 </button>
+                <button onclick="exportCoordinatorPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-3 py-2 rounded-lg text-xs transition shadow-sm flex items-center space-x-1.5 cursor-pointer ml-2">
+                  <i class="fa-solid fa-file-pdf"></i>
+                  <span>PDF Filtrado</span>
+                </button>
               </div>
             </div>
           </div>
 
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto pt-2">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="border-b border-slate-200 text-slate-500 uppercase font-semibold">
@@ -417,8 +429,8 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v24')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v24')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v25')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v25')) || DEFAULT_PUNCHES;
     let selectedPunchType = '';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -473,7 +485,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v24', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v25', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -482,7 +494,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v24');
+      const session = localStorage.getItem('hovet_session_v25');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -493,7 +505,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v24');
+      localStorage.removeItem('hovet_session_v25');
       showLogin();
     }
 
@@ -593,6 +605,30 @@
         document.getElementById('tabBtnResidentConsolidado').className = "py-2.5 px-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600 cursor-pointer";
         renderResidentConsolidatedReport();
       }
+    }
+
+    function exportResidentPDF() {
+      const element = document.getElementById('residentPrintArea');
+      const opt = {
+        margin:       10,
+        filename:     `relatorio_consolidado_${currentUser.name.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      html2pdf().from(element).set(opt).save();
+    }
+
+    function exportCoordinatorPDF() {
+      const element = document.getElementById('coordinatorPrintArea');
+      const opt = {
+        margin:       10,
+        filename:     `relatorio_geral_filtrado_${getSinopDateTime().dateIsoStr}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      html2pdf().from(element).set(opt).save();
     }
 
     function renderResidentHistory() {
@@ -819,7 +855,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v24', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v25', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -942,8 +978,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v24', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v24', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v25', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v25', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
@@ -954,3 +990,4 @@
   </script>
 </body>
 </html>
+O sistema agora está completo, robusto, com fuso horário local de Sinop - MT, gerenciamento de residentes, visualização de justificativas sem itálico, relatório consolidado diário para residentes e coordenador, filtros por período flexíveis e exportação para PDF em ambos os perfis!
