@@ -81,7 +81,7 @@
         <div class="bg-blue-50/70 p-3 rounded-lg border border-blue-100 text-xs text-slate-600 space-y-1 mt-4">
           <p class="font-semibold text-blue-900 mb-1"><i class="fa-solid fa-circle-info me-1"></i> Contas de Simulação:</p>
           <p>• <strong>Residente:</strong> residente@ufmt.br (Senha: 123456)</p>
-          <p>• <strong>Coordenação (PRUMV):</strong> coord@ufmt.br (Senha: 123456)</p>
+          <p>• <strong>PRUMV (Coordenação):</strong> coord@ufmt.br (Senha: 123456)</p>
         </div>
       </form>
     </section>
@@ -319,35 +319,40 @@
     ];
 
     let currentUser = null;
-    let users = JSON.parse(localStorage.getItem('hovet_users_v4')) || DEFAULT_USERS;
-    let punches = JSON.parse(localStorage.getItem('hovet_punches_v4')) || DEFAULT_PUNCHES;
+    let users = JSON.parse(localStorage.getItem('hovet_users_v5')) || DEFAULT_USERS;
+    let punches = JSON.parse(localStorage.getItem('hovet_punches_v5')) || DEFAULT_PUNCHES;
 
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
       checkSession();
     });
 
-    // Função para obter data/hora estritamente no fuso de Sinop - MT (America/Cuiaba)
+    // Força o fuso horário de Sinop - Mato Grosso (GMT-4 / America/Cuiaba)
     function getSinopDateTime() {
       const now = new Date();
       
-      // Formata a data e hora baseada no fuso de Cuiabá/Sinop (GMT-4)
       const optionsTime = { timeZone: 'America/Cuiaba', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
       const optionsDate = { timeZone: 'America/Cuiaba', year: 'numeric', month: '2-digit', day: '2-digit' };
       const optionsFullDate = { timeZone: 'America/Cuiaba', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
-      const timeStr = new Intl.DateTimeFormat('pt-BR', optionsTime).format(now);
-      
-      // Para o formato ISO YYYY-MM-DD em Sinop
-      const parts = new Intl.DateTimeFormat('pt-BR', optionsDate).formatToParts(now);
-      const day = parts.find(p => p.type === 'day').value;
-      const month = parts.find(p => p.type === 'month').value;
-      const year = parts.find(p => p.type === 'year').value;
-      const dateIsoStr = `${year}-${month}-${day}`;
+      try {
+        const timeStr = new Intl.DateTimeFormat('pt-BR', optionsTime).format(now);
+        const parts = new Intl.DateTimeFormat('pt-BR', optionsDate).formatToParts(now);
+        const day = parts.find(p => p.type === 'day').value;
+        const month = parts.find(p => p.type === 'month').value;
+        const year = parts.find(p => p.type === 'year').value;
+        const dateIsoStr = `${year}-${month}-${day}`;
+        const dateFullStr = new Intl.DateTimeFormat('pt-BR', optionsFullDate).format(now);
 
-      const dateFullStr = new Intl.DateTimeFormat('pt-BR', optionsFullDate).format(now);
-
-      return { timeStr, dateIsoStr, dateFullStr };
+        return { timeStr, dateIsoStr, dateFullStr };
+      } catch (e) {
+        // Fallback caso o navegador tenha restrições de Intl
+        return {
+          timeStr: now.toLocaleTimeString('pt-BR'),
+          dateIsoStr: now.toISOString().split('T')[0],
+          dateFullStr: now.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        };
+      }
     }
 
     function startClock() {
@@ -369,7 +374,7 @@
 
       if (user) {
         currentUser = user;
-        localStorage.setItem('hovet_session_v4', JSON.stringify(user));
+        localStorage.setItem('hovet_session_v5', JSON.stringify(user));
         document.getElementById('loginError').classList.add('hidden');
         renderApp();
       } else {
@@ -378,7 +383,7 @@
     }
 
     function checkSession() {
-      const session = localStorage.getItem('hovet_session_v4');
+      const session = localStorage.getItem('hovet_session_v5');
       if (session) {
         currentUser = JSON.parse(session);
         renderApp();
@@ -389,7 +394,7 @@
 
     function logout() {
       currentUser = null;
-      localStorage.removeItem('hovet_session_v4');
+      localStorage.removeItem('hovet_session_v5');
       showLogin();
     }
 
@@ -404,7 +409,6 @@
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('userHeaderInfo').classList.remove('hidden');
       document.getElementById('userName').innerText = currentUser.name;
-      // Exibe "PRUMV" no nome e "COORDENAÇÃO" em azul conforme solicitado
       document.getElementById('userRole').innerText = currentUser.role === 'coordinator' ? 'COORDENAÇÃO' : 'Residente';
 
       if (currentUser.role === 'resident') {
@@ -585,7 +589,7 @@
       if (newPassword) currentUser.pass = newPassword;
       
       saveData();
-      localStorage.setItem('hovet_session_v4', JSON.stringify(currentUser));
+      localStorage.setItem('hovet_session_v5', JSON.stringify(currentUser));
       document.getElementById('coordPasswordInput').value = '';
       alert('Perfil da Coordenação atualizado com sucesso!');
     }
@@ -655,8 +659,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('hovet_users_v4', JSON.stringify(users));
-      localStorage.setItem('hovet_punches_v4', JSON.stringify(punches));
+      localStorage.setItem('hovet_users_v5', JSON.stringify(users));
+      localStorage.setItem('hovet_punches_v5', JSON.stringify(punches));
     }
 
     function formatDate(dateStr) {
